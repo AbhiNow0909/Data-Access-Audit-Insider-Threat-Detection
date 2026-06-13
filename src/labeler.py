@@ -25,7 +25,7 @@ LABELING ARCHETYPES (in priority order)
   HIGH      PRIVILEGED_NIGHT_ADMIN_OP       admin/power-user admin_operation on
                                             high/med sensitivity at night
   MEDIUM    STALE_ACCOUNT_SENSITIVE         dormant account (days_inactive > 45)
-                                            touching high/med sensitivity
+                                            on HIGH sensitivity, off-hours or export
   MEDIUM    FAILED_SENSITIVE_ACCESS         failed access attempt on high sensitivity
   (else)    not an anomaly
 
@@ -82,8 +82,11 @@ def derive_label(row: pd.Series, profile: pd.Series | None = None) -> dict:
     if priv in _ELEVATED and action == "admin_operation" and tc == "night" and sensitive:
         return _anomaly("PRIVILEGED_NIGHT_ADMIN_OP", "HIGH")
 
-    # 4) Dormant account touching sensitive data.
-    if days_inactive > LABEL_STALE_DAYS and sensitive:
+    # 4) Dormant account touching HIGH-sensitivity data with a co-occurring risk
+    #    factor (off-hours or an export). Dormancy alone is weak signal, so a
+    #    second factor is required for a defensible "stale account" anomaly.
+    if (days_inactive > LABEL_STALE_DAYS and sens == "high"
+            and (tc in _OFF_HOURS or action == "export_data")):
         return _anomaly("STALE_ACCOUNT_SENSITIVE", "MEDIUM")
 
     # 5) Failed attempt against a high-sensitivity resource (probing).

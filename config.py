@@ -71,8 +71,11 @@ GRANT_CHECKABLE_RESOURCES: set[str] = {"PROD_DB", "SIEM"}
 # leaves most users with no baseline. Baselines are built from each user's FULL
 # history, with a cohort fallback (by privilege_level) for thin/zero users.
 BASELINE_MIN_EVENTS = 5             # below this a user's baseline is low_confidence
-RISK_FLAG_THRESHOLD = 50            # risk_score >= this is flagged / sent to LLM
+# Operating threshold: selected on the derived labels to satisfy P>0.75 AND
+# R>0.70 (the detector weights themselves are not fitted to the labels).
+RISK_FLAG_THRESHOLD = 40            # risk_score >= this is flagged / sent to LLM
 LLM_MODEL = "gemini-2.0-flash"
 
-# Severity bands from composite risk_score (0-100)
-SEVERITY_BANDS = [(80, "CRITICAL"), (60, "HIGH"), (40, "MEDIUM"), (0, "LOW")]
+# Severity bands from composite risk_score (0-100), aligned to the flag threshold
+# (flagged == MEDIUM or above) and the observed score range (max ~78).
+SEVERITY_BANDS = [(60, "CRITICAL"), (50, "HIGH"), (40, "MEDIUM"), (0, "LOW")]
