@@ -441,15 +441,16 @@ Functions take the enriched row (profile columns already merged in by ingestor).
 - [x] Result: 1200 scored, 158 flagged (>=50); top alerts are explainable
       cross-dept off-hours exports. **Commit:** `feat: 5-dimension anomaly scoring engine`
 
-### Step 5 — False Positive Suppression  (src/suppressor.py)
-- [ ] `suppress(row, profile) -> dict`
-      Returns `{'suppressed': bool, 'reason': str, 'adjusted_severity': str}`
-- [ ] Implement all 5 suppression rules from architecture section above
-- [ ] `apply_suppression(scored_df, profiles) -> pd.DataFrame`
-      Adds columns: `suppressed`, `suppression_reason`, `adjusted_severity`
-- [ ] Write one inline unit test per rule using assert statements at bottom of file
-      (run with `python src/suppressor.py` — prints PASS/FAIL per rule)
-- [ ] **Commit:** `feat: false positive suppression with 5 rules`
+### Step 5 — False Positive Suppression  (src/suppressor.py)  [DONE]
+- [x] `suppress(row) -> dict` (profile cols already merged into row)
+      Returns `{suppressed, suppression_reason, adjusted_risk_score, adjusted_severity}`
+- [x] All 5 rules: month-end Finance downgrade, admin-night→Dim1, new-hire→Dim3,
+      inactive→escalate CRITICAL, failed low/med→drop Dim2 bonus
+- [x] `apply_suppression(scored_df, profiles=None) -> pd.DataFrame`
+      Adds: `suppressed`, `suppression_reason`, `adjusted_risk_score`, `adjusted_severity`
+- [x] Inline unit test per rule — run `python -m src.suppressor` (6/6 PASS)
+- [x] Effect: 54 events suppressed; flagged 158->154, HIGH 44->39.
+      **Commit:** `feat: false positive suppression with 5 rules`
 
 ### Step 6 — Ground Truth Labeler  (src/labeler.py)
 - [ ] `derive_label(row, profile) -> dict`
