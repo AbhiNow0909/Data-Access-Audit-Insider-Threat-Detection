@@ -49,6 +49,23 @@ SENSITIVITY_RANK = {"low": 1, "medium": 2, "high": 3, "restricted": 4}
 OFF_HOURS_CLASSES = {"night", "unusual_hours", "weekend"}
 FINANCE_DEPARTMENTS = {"Finance", "Accounting"}
 
+# Dim 3 (inappropriate resource access): which department(s) legitimately "own"
+# each sensitive resource. Access by anyone outside the owner set is cross-domain
+# and scored by sensitivity. Resources NOT listed (BI_Tool, File_Share, PROD_DB)
+# are treated as broadly accessible. Tunable — adjust to the org's reality.
+RESOURCE_OWNER_DEPARTMENTS: dict[str, set[str]] = {
+    "HRIS": {"HR"},
+    "GL_System": {"Finance"},
+    "Customer_Vault": {"Sales", "Support", "Marketing"},
+    "Admin_Console": {"IT", "Security"},
+    "SIEM": {"Security", "IT"},
+    "Data_Lake": {"Engineering", "IT"},
+    "Email_Archive": {"Legal", "Compliance"},
+}
+# The only resources whose names actually appear in the systems_access grant
+# vocabulary, so a "not in grant" check is meaningful for these alone.
+GRANT_CHECKABLE_RESOURCES: set[str] = {"PROD_DB", "SIEM"}
+
 # --- Pipeline tunables -----------------------------------------------------
 # The data is sparse (~12 events/user/year), so a fixed 30-day training window
 # leaves most users with no baseline. Baselines are built from each user's FULL

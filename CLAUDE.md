@@ -192,25 +192,33 @@ Layer 4  ANOMALY SCORING + FP SUPPRESSION
 
          5-DIMENSION SCORING — composite 0-100 (all integers):
 
-         DIM 1 — Time Anomaly                              max 20 pts
-           Column: time_classification
+         DIM 1 — Time Anomaly (behavioral)                 max 20 pts
+           Column: time_classification + baseline
            business_hours → 0  |  unusual_hours → 8
            weekend → 12        |  night → 20
+           HALVED if the user does that time_class >= 2x in their history
+           (genuine night-workers are not penalized).
 
          DIM 2 — Action × Sensitivity Risk                 max 25 pts
-           Columns: action + resource_sensitivity
-           Cross-score matrix:
+           Columns: action + resource_sensitivity + status
+           Action classes: read = {login, sql_query, api_call, file_access},
+                           admin = admin_operation, export = export_data
                                low  medium  high  restricted
-           login/SELECT         0     2      8      15
-           UPDATE/INSERT        1     5     12      20
-           admin_operation      3     8     18      23
-           EXPORT/DELETE        5    10     20      25
-           status=failed        +5 bonus added to any cell above
+           read                 0     2      8      15
+           admin                3     8     18      23
+           export               5    10     20      25
+           status=failure       +5 bonus (cell capped at 25)
 
-         DIM 3 — Unauthorized System Access                max 25 pts
-           Columns: resource + systems_access (profile)
-           resource IN systems_access     →  0 pts
-           resource NOT IN systems_access → 25 pts
+         DIM 3 — Inappropriate Resource Access             max 25 pts
+           REDESIGNED: resource names and systems_access tokens are different
+           namespaces (overlap only on PROD_DB/SIEM), so the literal
+           "resource IN systems_access" check fires on 96.9% of events. Instead:
+           a) Cross-department: resource has an owning department set
+              (config.RESOURCE_OWNER_DEPARTMENTS) and the user is outside it
+              → low 8 / medium 15 / high 25
+           b) Grant violation (PROD_DB, SIEM only — the checkable resources):
+              resource not in user's systems_access → low 6 / medium 12 / high 25
+           Dim3 = max(a, b), capped 25.
 
          DIM 4 — Stale / Inactive Account                  max 15 pts
            Columns: is_active + days_inactive (profile)
@@ -220,11 +228,12 @@ Layer 4  ANOMALY SCORING + FP SUPPRESSION
            days_inactive 8-30   →  4 pts
            days_inactive 0-7    →  0 pts
 
-         DIM 5 — IP & Privilege Anomaly                    max 15 pts
-           Columns: source_ip (log) + privilege_level (profile) + baseline.seen_ips
-           source_ip not in baseline.seen_ips  →  8 pts
-           privilege_level=admin + night       →  7 pts
-           Both signals present               → 15 pts
+         DIM 5 — Privilege × Off-hours                     max 15 pts
+           REDESIGNED: source_ip is unique per event (1192/1200), so IP-novelty
+           is dead. Uses privilege_level x time instead:
+           privilege in {admin, power-user} AND night            → 15 pts
+           privilege in {admin, power-user} AND unusual/weekend   →  8 pts
+           else                                                  →  0 pts
 
          composite risk_score = sum(dim1..dim5), clipped to 0-100 (integer)
          anomaly_signals = list of human-readable strings for each dim that fired
@@ -416,20 +425,21 @@ git push origin main
 - [x] `privilege_level=admin` — cohort-widened expected patterns
 - [x] **Commit:** `feat: per-user behavioral baseline engine`
 
-### Step 4 — Anomaly Scoring Engine  (src/detector.py)
-- [ ] `score_time(row) -> int` — Dim 1, max 20, uses `time_classification`
-- [ ] `score_action_sensitivity(row) -> int` — Dim 2, max 25, cross-score matrix above
-- [ ] `score_system_access(row, profile) -> int` — Dim 3, max 25, resource vs systems_access
-- [ ] `score_stale_account(profile) -> int` — Dim 4, max 15, is_active + days_inactive
-- [ ] `score_ip_privilege(row, profile, baseline) -> int` — Dim 5, max 15
-- [ ] `build_anomaly_signals(row, profile, baseline, scores) -> list[str]`
-      Human-readable signal strings for each dimension that fired (score > 0)
-- [ ] `compute_risk_score(row, profile, baseline) -> tuple[int, list[str]]`
-      Returns (composite_score clipped 0-100, signals_list)
-- [ ] `score_all_events(df, profiles, baselines) -> pd.DataFrame`
-      Adds columns: `dim1`..`dim5`, `risk_score`, `anomaly_signals`
-      Writes full result to `config.SCORED_CSV`
-- [ ] **Commit:** `feat: 5-dimension anomaly scoring engine`
+### Step 4 — Anomaly Scoring Engine  (src/detector.py)  [DONE]
+Functions take the enriched row (profile columns already merged in by ingestor).
+- [x] `score_time(row, baseline) -> int` — Dim 1, max 20, behavioral (habitual discount)
+- [x] `score_action_sensitivity(row) -> int` — Dim 2, max 25, action-class x sensitivity
+- [x] `score_system_access(row) -> int` — Dim 3, max 25, cross-dept + grant violation
+- [x] `score_stale_account(row) -> int` — Dim 4, max 15, is_active + days_inactive
+- [x] `score_ip_privilege(row) -> int` — Dim 5, max 15, privilege x off-hours
+- [x] `build_anomaly_signals(row, dims) -> list[str]`
+- [x] `compute_risk_score(row, baseline) -> tuple[int, list[str]]`
+- [x] `severity_from_score(score) -> str`
+- [x] `score_all_events(df, baselines) -> pd.DataFrame`
+      Adds `dim1_time`..`dim5_privilege`, `risk_score`, `severity`, `anomaly_signals`;
+      writes `config.SCORED_CSV`
+- [x] Result: 1200 scored, 158 flagged (>=50); top alerts are explainable
+      cross-dept off-hours exports. **Commit:** `feat: 5-dimension anomaly scoring engine`
 
 ### Step 5 — False Positive Suppression  (src/suppressor.py)
 - [ ] `suppress(row, profile) -> dict`
