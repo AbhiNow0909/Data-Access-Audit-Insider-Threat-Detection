@@ -1,0 +1,19 @@
+# Core data / stats
+pandas
+numpy
+scipy
+scikit-learn
+
+# API
+fastapi
+uvicorn[standard]
+pydantic
+
+# LLM
+google-generativeai
+python-dotenv
+
+# Notebooks / viz
+jupyter
+matplotlib
+seaborn
