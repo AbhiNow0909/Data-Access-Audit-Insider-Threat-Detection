@@ -277,52 +277,31 @@ Notebooks load from `data/output/` for the evaluation notebook (no re-running pi
 
 ---
 
-## Evaluation — Three-Tier Strategy  [src/evaluator.py]
+## Evaluation — Two-Tier Strategy  [src/evaluator.py]
 
-Ground truth label files were not included in the organizer sample data.
-An email has been sent requesting them. Build all three tiers — they stack.
+Ground truth label files were not included in organizer sample data.
+An email has been sent requesting them.
+NOTE: Tier 1 (hardcoded access_id evaluation) was dropped — the real
+data_access_logs.csv has no access_id column and no ACC-XXXXXX identifiers.
 
-### Tier 1 — Known Anomaly Recall (always available)
-The README documents 6 explicitly named anomalous access_ids:
-```python
-KNOWN_ANOMALIES = {
-    'ACC-000007': 'BULK_EXPORT_UNUSUAL',
-    'ACC-000012': 'NIGHT_BULK_EXPORT_CRITICAL',
-    'ACC-000013': 'NIGHT_BULK_EXPORT_CRITICAL',
-    'ACC-000017': 'BULK_EXPORT_UNUSUAL',
-    'ACC-000028': 'ANALYST_ACCESSING_RESTRICTED',
-    'ACC-000029': 'INTERN_BULK_PII_ACCESS',
-}
-```
-Metric: did the system flag all 6? At what severity?
-Function: `evaluate_known_anomalies(scored_df) -> dict`
-
-### Tier 2 — Derived Label Evaluation (src/labeler.py)
-Build ground truth from domain rules using real columns:
-```python
-# labeler.py derives is_anomaly + anomaly_type + derived_severity per event
-# Rules based on: time_classification, resource_sensitivity,
-#                 systems_access, action, status, is_active, days_inactive
-# Output written to data/output/derived_labels.csv
-```
-Compute full Precision, Recall, F1 against derived labels.
+### Tier 2 — Derived Label Evaluation (PRIMARY)  [src/labeler.py]
+Build ground truth from domain rules using real columns.
+Compute full Precision, Recall, F1 against derived_labels.csv.
 Document labeling methodology transparently in notebook Section 1.
-Function: `evaluate_against_derived(scored_df, labels_df) -> dict`
+Function: evaluate_against_derived(scored_df, labels_df) -> dict
+Target: Precision > 0.75, Recall > 0.70, F1 > 0.72
 
-### Tier 3 — Organizer Label Evaluation (plug-in when available)
-If organizers provide label files, drop them in `data/raw/` and run:
-Function: `evaluate_against_labels(scored_df, labels_df) -> dict`
-This function accepts any labels dataframe — source agnostic.
+### Tier 3 — Organizer Label Evaluation (PLUG-IN when available)
+If organizers provide label files, drop them in data/raw/ and run.
+Function: evaluate_against_labels(scored_df, labels_df) -> dict
+Accepts any labels dataframe — source agnostic by design.
 
 ### Unified Report
-```python
 def full_evaluation_report(scored_df, profiles_df, organizer_labels_df=None):
-    """
-    Runs all available tiers. Uses organizer labels if provided,
-    always runs Tier 1 and Tier 2 regardless.
+    Runs Tier 2 always.
+    Runs Tier 3 only if organizer_labels_df is provided.
     Prints unified report + returns metrics dict.
-    """
-```
+    
 **Targets (against derived labels):** Precision > 0.75, Recall > 0.70, F1 > 0.72
 
 ---
