@@ -452,15 +452,19 @@ Functions take the enriched row (profile columns already merged in by ingestor).
 - [x] Effect: 54 events suppressed; flagged 158->154, HIGH 44->39.
       **Commit:** `feat: false positive suppression with 5 rules`
 
-### Step 6 — Ground Truth Labeler  (src/labeler.py)
-- [ ] `derive_label(row, profile) -> dict`
-      Returns `{'is_anomaly': bool, 'anomaly_type': str|None, 'derived_severity': str}`
-      Rules: stale account access, unauthorized sensitive access,
-      off-hours privileged action, failed restricted access
-- [ ] `label_all_events(df, profiles) -> pd.DataFrame`
-      Writes result to `config.LABELS_CSV`
-- [ ] Document labeling methodology in module docstring — judges will read this
-- [ ] **Commit:** `feat: rule-derived ground truth labeler`
+### Step 6 — Ground Truth Labeler  (src/labeler.py)  [DONE]
+- [x] `derive_label(row) -> dict` — 6 categorical archetypes (off-hours sensitive
+      export, cross-dept sensitive, privileged night admin-op, stale-account
+      sensitive, failed sensitive access). Intentionally a DIFFERENT decision
+      structure than the detector's additive score (non-circular eval).
+- [x] `label_all_events(df) -> pd.DataFrame` — writes `config.LABELS_CSV`
+- [x] Methodology documented in module docstring (judges read this)
+- [x] Result: 546 anomalies (45.5%, matches the ~46% the problem statement cites)
+- [x] **Commit:** `feat: rule-derived ground truth labeler`
+- NOTE for Step 8: detector vs labels is currently P=0.88 / R=0.25 @ thr 50 —
+  precision is great but recall is far below target. Step 8 must CALIBRATE the
+  detector (weights/threshold) so strong single-signal archetypes (cross-dept
+  sensitive, stale-sensitive) clear the bar. Labels are fixed ground truth.
 
 ### Step 7 — LLM Narrator  (src/llm_narrator.py)
 - [ ] Load `GEMINI_API_KEY` from `.env` via `python-dotenv`
