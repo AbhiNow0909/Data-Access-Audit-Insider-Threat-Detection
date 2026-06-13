@@ -23,7 +23,7 @@ Thumbs.db
 .vscode/
 .idea/
 
-# Pipeline outputs (generated)
-outputs/*.json
-outputs/*.txt
+# Pipeline outputs (generated) — keep the folder, ignore its contents
+data/output/*
+!data/output/.gitkeep
 *.sqlite

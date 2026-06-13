@@ -1,8 +1,8 @@
 """Layer 4 — Anomaly scoring engine: composite 0-100 risk score per event.
 
-Scoring dimensions are adapted to the available columns (time, sensitivity,
-first-time resource access, action risk, failure/off-hours combos) since the
-logs contain no rowcount/destination fields.
+5 dimensions over real columns: (1) time, (2) action x sensitivity,
+(3) unauthorized system access, (4) stale/inactive account, (5) IP & privilege.
+See CLAUDE.md for the exact point matrices.
 
 Placeholder scaffold (Step 1). Implemented in Step 4.
 """

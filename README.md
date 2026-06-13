@@ -25,19 +25,20 @@ important notes on how the implementation adapts to the actual dataset schema.
 ## Project layout
 
 ```
-src/        importable pipeline modules (config, ingestor, baseline, detector,
-            suppressor, llm_narrator, evaluator)
-api/        FastAPI backend serving dashboard data
-frontend/   React + Vite dashboard (Step 9)
-notebooks/  01_eda_and_baseline, 02_anomaly_detection_evaluation
-docs/       architecture / frontend / notebook guides
-sample_data/  organizer-provided CSVs (read-only)
-outputs/    generated incident reports (gitignored)
+config.py     all paths + schema constants (no hardcoding anywhere else)
+src/          importable pipeline modules (ingestor, baseline, detector,
+              suppressor, labeler, llm_narrator, evaluator)
+api/          FastAPI backend serving dashboard data
+frontend/     React + Vite dashboard
+notebooks/    01_eda_and_baseline, 02_anomaly_detection_evaluation
+docs/         architecture / frontend / notebook guides
+data/raw/     organizer-provided CSVs (READ-ONLY)
+data/output/  generated scores / flagged incidents / derived labels (gitignored)
 ```
 
 ---
 
-## Dataset (`sample_data/`)
+## Dataset (`data/raw/`)
 
 > The shipped CSVs differ from the original problem-statement examples. These are
 > the **actual** columns the pipeline is built against.
@@ -66,10 +67,11 @@ outputs/    generated incident reports (gitignored)
 | `systems_access` | pipe-separated grant list, e.g. `Azure_AD\|Salesforce` |
 | `last_login`, `days_inactive`, `is_active`, `hire_date` | account status |
 
-**No ground-truth label files and no `anomaly_marker` column ship with the
-data.** Evaluation therefore uses a transparent heuristic weak-label scheme
-(see [src/evaluator.py](src/evaluator.py)); swap in real labels via
-[src/config.py](src/config.py) if provided.
+**No ground-truth label files ship with the data.** Evaluation therefore uses a
+three-tier strategy: known-anomaly recall, full P/R/F1 against rule-derived
+labels ([src/labeler.py](src/labeler.py)), and plug-in organizer labels when
+available — wired via [config.py](config.py). See
+[src/evaluator.py](src/evaluator.py).
 
 ---
 
