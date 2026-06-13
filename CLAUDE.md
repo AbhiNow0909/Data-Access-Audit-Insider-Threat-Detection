@@ -492,16 +492,19 @@ Functions take the enriched row (profile columns already merged in by ingestor).
       Tier-1 critical recall 81%. Per-severity recall CRIT 81% / HIGH 76% / MED 51%.
 - [x] **Commit:** `feat: three-tier evaluation framework + detector calibration`
 
-### Step 9 — FastAPI Backend  (api/main.py)
-- [ ] On startup: run full pipeline (ingest → baseline → score → suppress → narrate → label)
-      Cache all results in module-level variables
-- [ ] `GET /incidents` — flagged_incidents sorted by risk_score desc, top 50
-- [ ] `GET /incidents/{access_id}` — single incident full detail
-- [ ] `GET /users` — all user profiles with their max risk_score
-- [ ] `GET /metrics` — evaluation report dict (all three tiers)
-- [ ] `GET /health` — pipeline status + record counts
-- [ ] Enable CORS for React dev server (localhost:5173)
-- [ ] **Commit:** `feat: FastAPI backend with full pipeline integration`
+### Step 9 — FastAPI Backend  (api/main.py)  [DONE]
+- [x] Lifespan startup runs full pipeline (ingest→baseline→score→suppress→label→
+      evaluate→narrate), caches in module-level STATE. Narrates top
+      API_TOP_INCIDENTS (env-tunable, default 50) to cap Gemini calls.
+- [x] `GET /incidents?limit=` — flagged, sorted by risk desc (slim columns)
+- [x] `GET /incidents/{incident_id}` — full detail (no access_id column exists,
+      so an integer incident_id = row index is used); 404 if not flagged
+- [x] `GET /users` — profiles + max_risk_score + flagged_events
+- [x] `GET /metrics` — Tier1 critical recall, Tier2 P/R/F1, per-severity, targets_met
+- [x] `GET /health` — status + counts
+- [x] CORS enabled for localhost:5173 / :3000
+- [x] All endpoints smoke-tested via TestClient (JSON-safe). 
+      **Commit:** `feat: FastAPI backend with full pipeline integration`
 
 ### Step 10 — React Dashboard  (frontend/)
 - [ ] Scaffold: `npm create vite@latest frontend -- --template react`
