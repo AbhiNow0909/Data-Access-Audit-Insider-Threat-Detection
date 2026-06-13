@@ -20,6 +20,11 @@ src/ingestor  src/baseline  src/detector  src/llm_narrator   api/ + frontend/
 See [docs/architecture.md](docs/architecture.md) for design decisions and the
 important notes on how the implementation adapts to the actual dataset schema.
 
+The dashboard also has a **Test Event** tab (backed by `POST /score`) to score an
+arbitrary ad-hoc event — including users not in the dataset — through the exact
+same pipeline, returning risk score, dimension scores, signals, narrative and
+recommended actions.
+
 ---
 
 ## Project layout

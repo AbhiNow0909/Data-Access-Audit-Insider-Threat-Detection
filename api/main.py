@@ -15,6 +15,7 @@ from contextlib import asynccontextmanager
 import pandas as pd
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 
 import config
 from src.ingestor import load_access_logs, load_user_profiles, merge_logs_with_profiles
@@ -23,7 +24,7 @@ from src.detector import score_all_events
 from src.suppressor import apply_suppression
 from src.labeler import label_all_events
 from src.evaluator import evaluate_known_anomalies, evaluate_against_derived, per_severity_metrics
-from src.llm_narrator import narrate_flagged_incidents
+from src.llm_narrator import narrate_flagged_incidents, generate_narrative_safe
 
 # How many top incidents to narrate on startup (caps Gemini calls). Env-tunable.
 API_TOP_INCIDENTS = int(os.getenv("API_TOP_INCIDENTS", "50"))
@@ -154,3 +155,86 @@ def users() -> list[dict]:
 def metrics() -> dict:
     """Evaluation metrics (Tier 1 critical recall, Tier 2 P/R/F1, per-severity)."""
     return STATE["metrics"]
+
+
+# --- Interactive ad-hoc scoring -------------------------------------------
+class ScoreRequest(BaseModel):
+    """One access event + the actor's profile context, scored on demand.
+
+    Defaults make every field optional except the event basics; an unseen user is
+    fine (scored conservatively against cohort norms, no personal history)."""
+    # Event
+    timestamp: str | None = None
+    action: str = "export_data"
+    resource: str = "Customer_Vault"
+    resource_sensitivity: str = "high"
+    status: str = "success"
+    time_classification: str = "night"
+    source_ip: str = "0.0.0.0"
+    # Actor / profile context
+    user_id: str = "AD-HOC"
+    username: str = "ad-hoc.user"
+    department: str = "IT"
+    job_title: str = "Analyst"
+    privilege_level: str = "user"
+    systems_access: str = ""
+    days_inactive: int = 0
+    is_active: bool = True
+    tenure_months: float = 24.0
+
+
+@app.post("/score")
+def score_event(req: ScoreRequest) -> dict:
+    """Score a single ad-hoc event through the exact production pipeline.
+
+    Returns the same shape the batch system produces: risk_score, severity,
+    dimension_scores, anomaly_signals, narrative and recommended_actions.
+    """
+    try:
+        ts = pd.to_datetime(req.timestamp, utc=True) if req.timestamp else pd.Timestamp.now(tz="UTC")
+    except (ValueError, TypeError) as exc:
+        raise HTTPException(status_code=400, detail=f"unparseable timestamp: {exc}")
+
+    row = {
+        config.COL_TIMESTAMP: ts,
+        config.COL_USER_ID: req.user_id,
+        config.COL_USERNAME: req.username,
+        config.COL_ACTION: req.action,
+        config.COL_RESOURCE: req.resource,
+        config.COL_SENSITIVITY: req.resource_sensitivity,
+        config.COL_STATUS: req.status,
+        config.COL_SOURCE_IP: req.source_ip,
+        config.COL_TIME_CLASS: req.time_classification,
+        config.COL_DEPARTMENT: req.department,
+        config.COL_JOB_TITLE: req.job_title,
+        config.COL_PRIVILEGE: req.privilege_level,
+        config.COL_SYSTEMS_ACCESS: req.systems_access,
+        "systems_access_list": [t.strip() for t in req.systems_access.split("|") if t.strip()],
+        config.COL_DAYS_INACTIVE: req.days_inactive,
+        config.COL_IS_ACTIVE: req.is_active,
+        "tenure_months": req.tenure_months,
+    }
+
+    # No baseline for an ad-hoc user -> no habitual-time discount (conservative).
+    df1 = pd.DataFrame([row])
+    scored = apply_suppression(score_all_events(df1, {}, write=False))
+    r = scored.iloc[0]
+    narrative = generate_narrative_safe(r, None)
+
+    return {
+        "risk_score": int(r["adjusted_risk_score"]),
+        "severity": r["adjusted_severity"],
+        "dimension_scores": {
+            "time": int(r["dim1_time"]),
+            "action_sensitivity": int(r["dim2_action_sensitivity"]),
+            "resource": int(r["dim3_resource"]),
+            "stale": int(r["dim4_stale"]),
+            "privilege": int(r["dim5_privilege"]),
+        },
+        "anomaly_signals": [s for s in str(r["anomaly_signals"]).split("; ") if s],
+        "narrative": narrative.get("narrative"),
+        "narrative_source": narrative.get("narrative_source"),
+        "confidence": narrative.get("confidence"),
+        "recommended_actions": narrative.get("recommended_actions", []),
+        "suppression": r["suppression_reason"] or None,
+    }

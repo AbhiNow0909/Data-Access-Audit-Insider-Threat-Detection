@@ -20,6 +20,10 @@ npm run dev      # http://localhost:5173  (backend must be running on :8000)
   vs rule-based fallback) and recommended actions. Source: `GET /incidents/{id}`.
 - **UserProfile** — per-user risk table (privilege, dormancy, flagged count, max
   risk). Source: `GET /users`.
+- **EventTester** ("Test Event" tab) — interactive form to score an arbitrary
+  ad-hoc event + actor (an unseen user is fine), returning the same outputs as
+  the batch system: risk score, dimension bars, signals, narrative, actions.
+  Source: `POST /score`. Self-contained — does not touch the batch dataset.
 
 ## Decisions
 - Single-page, two-tab layout (Incidents / Users) — fast to demo, no router.

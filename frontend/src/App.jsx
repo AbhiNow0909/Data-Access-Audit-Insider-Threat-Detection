@@ -4,6 +4,7 @@ import MetricsPanel from './components/MetricsPanel'
 import IncidentDashboard from './components/IncidentDashboard'
 import IncidentCard from './components/IncidentCard'
 import UserProfile from './components/UserProfile'
+import EventTester from './components/EventTester'
 
 export default function App() {
   const [health, setHealth] = useState(null)
@@ -68,7 +69,7 @@ export default function App() {
           </p>
         </div>
         <div className="flex gap-1 rounded-lg border border-slate-800 bg-slate-900 p-1">
-          {['incidents', 'users'].map((v) => (
+          {['incidents', 'users', 'test'].map((v) => (
             <button
               key={v}
               onClick={() => setView(v)}
@@ -76,7 +77,7 @@ export default function App() {
                 view === v ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-slate-200'
               }`}
             >
-              {v}
+              {v === 'test' ? 'Test Event' : v}
             </button>
           ))}
         </div>
@@ -90,8 +91,10 @@ export default function App() {
             <IncidentDashboard incidents={incidents} selectedId={selectedId} onSelect={setSelectedId} />
             <IncidentCard incident={detail} loading={detailLoading} />
           </div>
-        ) : (
+        ) : view === 'users' ? (
           <UserProfile users={users} />
+        ) : (
+          <EventTester />
         )}
       </main>
 

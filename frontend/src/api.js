@@ -10,5 +10,6 @@ export const getIncidents = (limit = 50) =>
   api.get('/incidents', { params: { limit } }).then((r) => r.data)
 export const getIncident = (id) => api.get(`/incidents/${id}`).then((r) => r.data)
 export const getUsers = () => api.get('/users').then((r) => r.data)
+export const scoreEvent = (payload) => api.post('/score', payload).then((r) => r.data)
 
 export default api
