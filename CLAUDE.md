@@ -516,19 +516,16 @@ Functions take the enriched row (profile columns already merged in by ingestor).
 - [x] axios client (`src/api.js`); dark two-tab SPA; API-offline message
 - [x] `npm run build` passes (89 modules). **Commit:** `feat: React dashboard with incident and metrics views`
 
-### Step 11 — EDA Notebook  (notebooks/01_eda_and_baseline.ipynb)
+### Step 11 — EDA Notebook  (notebooks/01_eda_and_baseline.ipynb)  [DONE]
 All cells import from `src/` — zero logic redefined in notebook.
-- [ ] Section 1: Data overview — shape, dtypes, null counts, date range,
-      unique users, unique resources
-- [ ] Section 2: Distribution plots — time_classification, resource_sensitivity,
-      action types, department breakdown
-- [ ] Section 3: Baseline visualization — 3 example users showing
-      seen_ips count, time_classification distribution, resource variety
-- [ ] Section 4: Anomaly signal preview — manually inspect the 6 known
-      anomalous access_ids from README
-- [ ] Section 5: Key findings markdown summary
-- [ ] Pre-run all cells — save with outputs visible
-- [ ] **Commit:** `feat: EDA and baseline analysis notebook`
+- [x] Section 1: Data overview — shapes, dtypes, null counts, date range, cardinalities
+- [x] Section 2: Distribution plots — time/sensitivity/action/department + action×sens heatmap
+- [x] Section 3: Baseline visualization — 3 example users (ips, time dist, resource variety)
+- [x] Section 4: Anomaly preview — derived-label archetypes (no access_id exists, so the
+      README's 6 ACC-ids were re-anchored to the derived archetype distribution + examples)
+- [x] Section 5: Key findings markdown summary
+- [x] Pre-run via nbconvert — 9 code cells, 0 errors, 4 plots, executed in order
+- [x] **Commit:** `feat: EDA and baseline analysis notebook`
 
 ### Step 12 — Evaluation Notebook  (notebooks/02_anomaly_detection_evaluation.ipynb)
 All cells import from `src/` — zero logic redefined.
