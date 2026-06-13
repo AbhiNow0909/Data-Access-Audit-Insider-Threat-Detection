@@ -506,18 +506,15 @@ Functions take the enriched row (profile columns already merged in by ingestor).
 - [x] All endpoints smoke-tested via TestClient (JSON-safe). 
       **Commit:** `feat: FastAPI backend with full pipeline integration`
 
-### Step 10 — React Dashboard  (frontend/)
-- [ ] Scaffold: `npm create vite@latest frontend -- --template react`
-      Install: `tailwindcss`, `recharts`, `axios`
-- [ ] `MetricsPanel.jsx` — P/R/F1 cards + tier indicators
-- [ ] `IncidentDashboard.jsx` — sortable table: severity badge, risk score,
-      username, resource, time_classification, action
-- [ ] `IncidentCard.jsx` — click-through: all scores per dimension,
-      signals list, Gemini narrative, recommended actions
-- [ ] `UserProfile.jsx` — profile stats, days_inactive, is_active flag,
-      all incidents for that user
-- [ ] Connect all to FastAPI via axios
-- [ ] **Commit:** `feat: React dashboard with incident and metrics views`
+### Step 10 — React Dashboard  (frontend/)  [DONE]
+- [x] Vite + React 18 + Tailwind v3 (files written directly; deps installed)
+- [x] `MetricsPanel.jsx` — P/R/F1 cards vs targets + flagged/confusion + crit recall
+- [x] `IncidentDashboard.jsx` — prioritized, clickable incident list w/ severity badges
+- [x] `IncidentCard.jsx` — 5 dimension bars, signal chips, narrative
+      (Gemini/fallback labelled), recommended actions, suppression note
+- [x] `UserProfile.jsx` — per-user risk table (privilege, dormancy, flagged, max risk)
+- [x] axios client (`src/api.js`); dark two-tab SPA; API-offline message
+- [x] `npm run build` passes (89 modules). **Commit:** `feat: React dashboard with incident and metrics views`
 
 ### Step 11 — EDA Notebook  (notebooks/01_eda_and_baseline.ipynb)
 All cells import from `src/` — zero logic redefined in notebook.
