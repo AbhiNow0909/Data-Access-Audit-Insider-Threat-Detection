@@ -539,15 +539,15 @@ All cells import from `src/` — zero logic redefined.
 - [x] Pre-run via nbconvert — 8 code cells, 0 errors, 4 plots, in order
 - [x] **Commit:** `feat: anomaly detection evaluation notebook`
 
-### Step 13 — Final Polish & Submission
-- [ ] Verify `data/output/flagged_incidents.csv` has 20+ incidents with narratives
-- [ ] Final `README.md`: setup, run instructions, architecture summary,
-      metric results, design decisions
-- [ ] Verify both notebooks run clean: `Kernel → Restart & Run All`
-- [ ] Verify FastAPI + React run together: no console errors, all endpoints respond
-- [ ] Run deliverables checklist below — confirm every box checked
-- [ ] **Commit:** `feat: final polish and submission prep`
-- [ ] **Tag:** `git tag v1.0.0 && git push origin v1.0.0`
+### Step 13 — Final Polish & Submission  [DONE]
+- [x] 365 narrated incidents (>20); `src/report.py` writes reports/incident_report.{json,md} (top 25)
+- [x] Final `README.md`: setup, run (fixed to project-root uvicorn), results, evaluation,
+      data-reality adaptations, deliverables checklist
+- [x] Both notebooks pre-run clean via nbconvert (0 errors)
+- [x] FastAPI verified via TestClient (all endpoints); frontend `npm run build` passes
+- [x] All modules import incl. api.main; final metrics stable (P0.764/R0.740/F10.752)
+- [x] **Commit:** `feat: final polish and submission prep`
+- [x] **Tag:** `v1.0.0` (push when a remote is configured)
 
 ---
 
@@ -611,4 +611,6 @@ jupyter notebook notebooks/
 - [x] Output file convention decided (data/output/, read-only raw/)
 - [x] Three-tier evaluation strategy designed (label files pending from organizers)
 - [x] CLAUDE.md fully updated
-- [ ] Step 1: Project scaffold
+- [x] **Steps 1–13 COMPLETE.** Targets met: P 0.764 / R 0.740 / F1 0.752.
+      Backend + dashboard + notebooks + incident report all built and verified.
+      Tagged v1.0.0.

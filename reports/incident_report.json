@@ -1,0 +1,846 @@
+[
+  {
+    "rank": 1,
+    "incident_id": 954,
+    "risk_score": 78,
+    "severity": "CRITICAL",
+    "user": "diya.schulz",
+    "role": "Manager, Executive",
+    "privilege": "power-user",
+    "timestamp": "2026-03-21 10:54:06+00:00",
+    "event": "export_data on Customer_Vault (high), success, night",
+    "dimension_scores": {
+      "dim1_time": 10,
+      "dim2_action_sensitivity": 20,
+      "dim3_resource": 25,
+      "dim4_stale": 8,
+      "dim5_privilege": 15
+    },
+    "anomaly_signals": [
+      "Off-hours access (night)",
+      "export_data on high-sensitivity Customer_Vault",
+      "Cross-department / ungranted access to Customer_Vault by Executive",
+      "Stale account (days_inactive=46)",
+      "Elevated privilege (power-user) at night"
+    ],
+    "confidence": 89,
+    "narrative_source": "fallback",
+    "narrative": "diya.schulz (Manager in Executive, power-user) performed export_data on high-sensitivity Customer_Vault at 2026-03-21 10:54:06+00:00 (night). This scored 78/100 on: Off-hours access (night); export_data on high-sensitivity Customer_Vault; Cross-department / ungranted access to Customer_Vault by Executive; Stale account (days_inactive=46); Elevated privilege (power-user) at night. The combination is consistent with potential insider risk and warrants review.",
+    "recommended_actions": [
+      "Block/quarantine the export and review the data destination for exfiltration",
+      "Verify business justification for Executive access to Customer_Vault",
+      "Review the account's privileged-access grants and recent admin activity"
+    ],
+    "suppression": null
+  },
+  {
+    "rank": 2,
+    "incident_id": 1109,
+    "risk_score": 76,
+    "severity": "CRITICAL",
+    "user": "george.clark",
+    "role": "Lead, Engineering",
+    "privilege": "power-user",
+    "timestamp": "2026-04-10 10:54:06+00:00",
+    "event": "api_call on PROD_DB (high), success, night",
+    "dimension_scores": {
+      "dim1_time": 20,
+      "dim2_action_sensitivity": 8,
+      "dim3_resource": 25,
+      "dim4_stale": 8,
+      "dim5_privilege": 15
+    },
+    "anomaly_signals": [
+      "Off-hours access (night)",
+      "api_call on high-sensitivity PROD_DB",
+      "Cross-department / ungranted access to PROD_DB by Engineering",
+      "Stale account (days_inactive=55)",
+      "Elevated privilege (power-user) at night"
+    ],
+    "confidence": 88,
+    "narrative_source": "fallback",
+    "narrative": "george.clark (Lead in Engineering, power-user) performed api_call on high-sensitivity PROD_DB at 2026-04-10 10:54:06+00:00 (night). This scored 76/100 on: Off-hours access (night); api_call on high-sensitivity PROD_DB; Cross-department / ungranted access to PROD_DB by Engineering; Stale account (days_inactive=55); Elevated privilege (power-user) at night. The combination is consistent with potential insider risk and warrants review.",
+    "recommended_actions": [
+      "Block/quarantine the export and review the data destination for exfiltration",
+      "Verify business justification for Engineering access to PROD_DB",
+      "Review the account's privileged-access grants and recent admin activity"
+    ],
+    "suppression": null
+  },
+  {
+    "rank": 3,
+    "incident_id": 194,
+    "risk_score": 76,
+    "severity": "CRITICAL",
+    "user": "nicholas.romano",
+    "role": "Officer, Security",
+    "privilege": "power-user",
+    "timestamp": "2025-08-27 18:09:00+00:00",
+    "event": "admin_operation on Customer_Vault (high), success, night",
+    "dimension_scores": {
+      "dim1_time": 10,
+      "dim2_action_sensitivity": 18,
+      "dim3_resource": 25,
+      "dim4_stale": 8,
+      "dim5_privilege": 15
+    },
+    "anomaly_signals": [
+      "Off-hours access (night)",
+      "admin_operation on high-sensitivity Customer_Vault",
+      "Cross-department / ungranted access to Customer_Vault by Security",
+      "Stale account (days_inactive=52)",
+      "Elevated privilege (power-user) at night"
+    ],
+    "confidence": 88,
+    "narrative_source": "fallback",
+    "narrative": "nicholas.romano (Officer in Security, power-user) performed admin_operation on high-sensitivity Customer_Vault at 2025-08-27 18:09:00+00:00 (night). This scored 76/100 on: Off-hours access (night); admin_operation on high-sensitivity Customer_Vault; Cross-department / ungranted access to Customer_Vault by Security; Stale account (days_inactive=52); Elevated privilege (power-user) at night. The combination is consistent with potential insider risk and warrants review.",
+    "recommended_actions": [
+      "Block/quarantine the export and review the data destination for exfiltration",
+      "Verify business justification for Security access to Customer_Vault",
+      "Review the account's privileged-access grants and recent admin activity"
+    ],
+    "suppression": null
+  },
+  {
+    "rank": 4,
+    "incident_id": 466,
+    "risk_score": 72,
+    "severity": "HIGH",
+    "user": "amitabh.taylor",
+    "role": "Director, Finance",
+    "privilege": "power-user",
+    "timestamp": "2026-01-28 10:54:05+00:00",
+    "event": "admin_operation on Customer_Vault (high), success, night",
+    "dimension_scores": {
+      "dim1_time": 10,
+      "dim2_action_sensitivity": 18,
+      "dim3_resource": 25,
+      "dim4_stale": 4,
+      "dim5_privilege": 15
+    },
+    "anomaly_signals": [
+      "Off-hours access (night)",
+      "admin_operation on high-sensitivity Customer_Vault",
+      "Cross-department / ungranted access to Customer_Vault by Finance",
+      "Stale account (days_inactive=30)",
+      "Elevated privilege (power-user) at night"
+    ],
+    "confidence": 86,
+    "narrative_source": "fallback",
+    "narrative": "amitabh.taylor (Director in Finance, power-user) performed admin_operation on high-sensitivity Customer_Vault at 2026-01-28 10:54:05+00:00 (night). This scored 72/100 on: Off-hours access (night); admin_operation on high-sensitivity Customer_Vault; Cross-department / ungranted access to Customer_Vault by Finance; Stale account (days_inactive=30); Elevated privilege (power-user) at night. The combination is consistent with potential insider risk and warrants review.",
+    "recommended_actions": [
+      "Block/quarantine the export and review the data destination for exfiltration",
+      "Verify business justification for Finance access to Customer_Vault",
+      "Review the account's privileged-access grants and recent admin activity"
+    ],
+    "suppression": "Month-end Finance close (severity downgraded)"
+  },
+  {
+    "rank": 5,
+    "incident_id": 762,
+    "risk_score": 72,
+    "severity": "CRITICAL",
+    "user": "neha.taylor",
+    "role": "Architect, Finance",
+    "privilege": "power-user",
+    "timestamp": "2026-02-27 10:54:06+00:00",
+    "event": "file_access on HRIS (high), success, night",
+    "dimension_scores": {
+      "dim1_time": 20,
+      "dim2_action_sensitivity": 8,
+      "dim3_resource": 25,
+      "dim4_stale": 4,
+      "dim5_privilege": 15
+    },
+    "anomaly_signals": [
+      "Off-hours access (night)",
+      "file_access on high-sensitivity HRIS",
+      "Cross-department / ungranted access to HRIS by Finance",
+      "Stale account (days_inactive=11)",
+      "Elevated privilege (power-user) at night"
+    ],
+    "confidence": 86,
+    "narrative_source": "fallback",
+    "narrative": "neha.taylor (Architect in Finance, power-user) performed file_access on high-sensitivity HRIS at 2026-02-27 10:54:06+00:00 (night). This scored 72/100 on: Off-hours access (night); file_access on high-sensitivity HRIS; Cross-department / ungranted access to HRIS by Finance; Stale account (days_inactive=11); Elevated privilege (power-user) at night. The combination is consistent with potential insider risk and warrants review.",
+    "recommended_actions": [
+      "Block/quarantine the export and review the data destination for exfiltration",
+      "Verify business justification for Finance access to HRIS",
+      "Review the account's privileged-access grants and recent admin activity"
+    ],
+    "suppression": null
+  },
+  {
+    "rank": 6,
+    "incident_id": 896,
+    "risk_score": 71,
+    "severity": "CRITICAL",
+    "user": "meera.burke",
+    "role": "Executive, Operations",
+    "privilege": "power-user",
+    "timestamp": "2026-03-13 10:54:06+00:00",
+    "event": "admin_operation on GL_System (high), success, weekend",
+    "dimension_scores": {
+      "dim1_time": 12,
+      "dim2_action_sensitivity": 18,
+      "dim3_resource": 25,
+      "dim4_stale": 8,
+      "dim5_privilege": 8
+    },
+    "anomaly_signals": [
+      "Off-hours access (weekend)",
+      "admin_operation on high-sensitivity GL_System",
+      "Cross-department / ungranted access to GL_System by Operations",
+      "Stale account (days_inactive=59)",
+      "Elevated privilege (power-user) at weekend"
+    ],
+    "confidence": 85,
+    "narrative_source": "fallback",
+    "narrative": "meera.burke (Executive in Operations, power-user) performed admin_operation on high-sensitivity GL_System at 2026-03-13 10:54:06+00:00 (weekend). This scored 71/100 on: Off-hours access (weekend); admin_operation on high-sensitivity GL_System; Cross-department / ungranted access to GL_System by Operations; Stale account (days_inactive=59); Elevated privilege (power-user) at weekend. The combination is consistent with potential insider risk and warrants review.",
+    "recommended_actions": [
+      "Block/quarantine the export and review the data destination for exfiltration",
+      "Verify business justification for Operations access to GL_System",
+      "Review the account's privileged-access grants and recent admin activity"
+    ],
+    "suppression": null
+  },
+  {
+    "rank": 7,
+    "incident_id": 291,
+    "risk_score": 71,
+    "severity": "CRITICAL",
+    "user": "leila.lopez",
+    "role": "Executive, IT",
+    "privilege": "user",
+    "timestamp": "2025-10-29 05:42:00+00:00",
+    "event": "admin_operation on GL_System (high), success, night",
+    "dimension_scores": {
+      "dim1_time": 20,
+      "dim2_action_sensitivity": 18,
+      "dim3_resource": 25,
+      "dim4_stale": 8,
+      "dim5_privilege": 0
+    },
+    "anomaly_signals": [
+      "Off-hours access (night)",
+      "admin_operation on high-sensitivity GL_System",
+      "Cross-department / ungranted access to GL_System by IT",
+      "Stale account (days_inactive=43)"
+    ],
+    "confidence": 85,
+    "narrative_source": "fallback",
+    "narrative": "leila.lopez (Executive in IT, user) performed admin_operation on high-sensitivity GL_System at 2025-10-29 05:42:00+00:00 (night). This scored 71/100 on: Off-hours access (night); admin_operation on high-sensitivity GL_System; Cross-department / ungranted access to GL_System by IT; Stale account (days_inactive=43). The combination is consistent with potential insider risk and warrants review.",
+    "recommended_actions": [
+      "Block/quarantine the export and review the data destination for exfiltration",
+      "Verify business justification for IT access to GL_System",
+      "Confirm the account is still required; disable if the user has left or is dormant"
+    ],
+    "suppression": null
+  },
+  {
+    "rank": 8,
+    "incident_id": 53,
+    "risk_score": 69,
+    "severity": "CRITICAL",
+    "user": "christopher.menon",
+    "role": "Officer, Executive",
+    "privilege": "service-account",
+    "timestamp": "2025-05-24 18:49:00+00:00",
+    "event": "export_data on Customer_Vault (high), success, night",
+    "dimension_scores": {
+      "dim1_time": 20,
+      "dim2_action_sensitivity": 20,
+      "dim3_resource": 25,
+      "dim4_stale": 4,
+      "dim5_privilege": 0
+    },
+    "anomaly_signals": [
+      "Off-hours access (night)",
+      "export_data on high-sensitivity Customer_Vault",
+      "Cross-department / ungranted access to Customer_Vault by Executive",
+      "Stale account (days_inactive=22)"
+    ],
+    "confidence": 84,
+    "narrative_source": "fallback",
+    "narrative": "christopher.menon (Officer in Executive, service-account) performed export_data on high-sensitivity Customer_Vault at 2025-05-24 18:49:00+00:00 (night). This scored 69/100 on: Off-hours access (night); export_data on high-sensitivity Customer_Vault; Cross-department / ungranted access to Customer_Vault by Executive; Stale account (days_inactive=22). The combination is consistent with potential insider risk and warrants review.",
+    "recommended_actions": [
+      "Block/quarantine the export and review the data destination for exfiltration",
+      "Verify business justification for Executive access to Customer_Vault",
+      "Confirm the account is still required; disable if the user has left or is dormant"
+    ],
+    "suppression": null
+  },
+  {
+    "rank": 9,
+    "incident_id": 70,
+    "risk_score": 68,
+    "severity": "CRITICAL",
+    "user": "vikram.gonzalez",
+    "role": "Developer, Sales",
+    "privilege": "power-user",
+    "timestamp": "2025-06-01 13:43:00+00:00",
+    "event": "login on PROD_DB (high), success, night",
+    "dimension_scores": {
+      "dim1_time": 20,
+      "dim2_action_sensitivity": 8,
+      "dim3_resource": 25,
+      "dim4_stale": 0,
+      "dim5_privilege": 15
+    },
+    "anomaly_signals": [
+      "Off-hours access (night)",
+      "login on high-sensitivity PROD_DB",
+      "Cross-department / ungranted access to PROD_DB by Sales",
+      "Elevated privilege (power-user) at night"
+    ],
+    "confidence": 84,
+    "narrative_source": "fallback",
+    "narrative": "vikram.gonzalez (Developer in Sales, power-user) performed login on high-sensitivity PROD_DB at 2025-06-01 13:43:00+00:00 (night). This scored 68/100 on: Off-hours access (night); login on high-sensitivity PROD_DB; Cross-department / ungranted access to PROD_DB by Sales; Elevated privilege (power-user) at night. The combination is consistent with potential insider risk and warrants review.",
+    "recommended_actions": [
+      "Block/quarantine the export and review the data destination for exfiltration",
+      "Verify business justification for Sales access to PROD_DB",
+      "Review the account's privileged-access grants and recent admin activity"
+    ],
+    "suppression": null
+  },
+  {
+    "rank": 10,
+    "incident_id": 94,
+    "risk_score": 67,
+    "severity": "CRITICAL",
+    "user": "diya.anderson",
+    "role": "Administrator, Marketing",
+    "privilege": "user",
+    "timestamp": "2025-06-16 19:57:00+00:00",
+    "event": "admin_operation on GL_System (high), success, night",
+    "dimension_scores": {
+      "dim1_time": 20,
+      "dim2_action_sensitivity": 18,
+      "dim3_resource": 25,
+      "dim4_stale": 4,
+      "dim5_privilege": 0
+    },
+    "anomaly_signals": [
+      "Off-hours access (night)",
+      "admin_operation on high-sensitivity GL_System",
+      "Cross-department / ungranted access to GL_System by Marketing",
+      "Stale account (days_inactive=14)"
+    ],
+    "confidence": 83,
+    "narrative_source": "fallback",
+    "narrative": "diya.anderson (Administrator in Marketing, user) performed admin_operation on high-sensitivity GL_System at 2025-06-16 19:57:00+00:00 (night). This scored 67/100 on: Off-hours access (night); admin_operation on high-sensitivity GL_System; Cross-department / ungranted access to GL_System by Marketing; Stale account (days_inactive=14). The combination is consistent with potential insider risk and warrants review.",
+    "recommended_actions": [
+      "Block/quarantine the export and review the data destination for exfiltration",
+      "Verify business justification for Marketing access to GL_System",
+      "Confirm the account is still required; disable if the user has left or is dormant"
+    ],
+    "suppression": null
+  },
+  {
+    "rank": 11,
+    "incident_id": 81,
+    "risk_score": 67,
+    "severity": "CRITICAL",
+    "user": "steven.thompson",
+    "role": "Lead, Support",
+    "privilege": "power-user",
+    "timestamp": "2025-06-09 15:50:00+00:00",
+    "event": "admin_operation on HRIS (high), success, weekend",
+    "dimension_scores": {
+      "dim1_time": 12,
+      "dim2_action_sensitivity": 18,
+      "dim3_resource": 25,
+      "dim4_stale": 4,
+      "dim5_privilege": 8
+    },
+    "anomaly_signals": [
+      "Off-hours access (weekend)",
+      "admin_operation on high-sensitivity HRIS",
+      "Cross-department / ungranted access to HRIS by Support",
+      "Stale account (days_inactive=26)",
+      "Elevated privilege (power-user) at weekend"
+    ],
+    "confidence": 83,
+    "narrative_source": "fallback",
+    "narrative": "steven.thompson (Lead in Support, power-user) performed admin_operation on high-sensitivity HRIS at 2025-06-09 15:50:00+00:00 (weekend). This scored 67/100 on: Off-hours access (weekend); admin_operation on high-sensitivity HRIS; Cross-department / ungranted access to HRIS by Support; Stale account (days_inactive=26); Elevated privilege (power-user) at weekend. The combination is consistent with potential insider risk and warrants review.",
+    "recommended_actions": [
+      "Block/quarantine the export and review the data destination for exfiltration",
+      "Verify business justification for Support access to HRIS",
+      "Review the account's privileged-access grants and recent admin activity"
+    ],
+    "suppression": null
+  },
+  {
+    "rank": 12,
+    "incident_id": 965,
+    "risk_score": 67,
+    "severity": "CRITICAL",
+    "user": "nicholas.romano",
+    "role": "Officer, Security",
+    "privilege": "power-user",
+    "timestamp": "2026-03-23 10:54:05+00:00",
+    "event": "admin_operation on PROD_DB (high), success, unusual_hours",
+    "dimension_scores": {
+      "dim1_time": 8,
+      "dim2_action_sensitivity": 18,
+      "dim3_resource": 25,
+      "dim4_stale": 8,
+      "dim5_privilege": 8
+    },
+    "anomaly_signals": [
+      "Off-hours access (unusual_hours)",
+      "admin_operation on high-sensitivity PROD_DB",
+      "Cross-department / ungranted access to PROD_DB by Security",
+      "Stale account (days_inactive=52)",
+      "Elevated privilege (power-user) at unusual_hours"
+    ],
+    "confidence": 83,
+    "narrative_source": "fallback",
+    "narrative": "nicholas.romano (Officer in Security, power-user) performed admin_operation on high-sensitivity PROD_DB at 2026-03-23 10:54:05+00:00 (unusual_hours). This scored 67/100 on: Off-hours access (unusual_hours); admin_operation on high-sensitivity PROD_DB; Cross-department / ungranted access to PROD_DB by Security; Stale account (days_inactive=52); Elevated privilege (power-user) at unusual_hours. The combination is consistent with potential insider risk and warrants review.",
+    "recommended_actions": [
+      "Block/quarantine the export and review the data destination for exfiltration",
+      "Verify business justification for Security access to PROD_DB",
+      "Review the account's privileged-access grants and recent admin activity"
+    ],
+    "suppression": null
+  },
+  {
+    "rank": 13,
+    "incident_id": 199,
+    "risk_score": 67,
+    "severity": "HIGH",
+    "user": "amitabh.taylor",
+    "role": "Director, Finance",
+    "privilege": "power-user",
+    "timestamp": "2025-08-29 16:39:00+00:00",
+    "event": "login on HRIS (high), failure, night",
+    "dimension_scores": {
+      "dim1_time": 10,
+      "dim2_action_sensitivity": 13,
+      "dim3_resource": 25,
+      "dim4_stale": 4,
+      "dim5_privilege": 15
+    },
+    "anomaly_signals": [
+      "Off-hours access (night)",
+      "login on high-sensitivity HRIS failed",
+      "Cross-department / ungranted access to HRIS by Finance",
+      "Stale account (days_inactive=30)",
+      "Elevated privilege (power-user) at night"
+    ],
+    "confidence": 83,
+    "narrative_source": "fallback",
+    "narrative": "amitabh.taylor (Director in Finance, power-user) performed login on high-sensitivity HRIS at 2025-08-29 16:39:00+00:00 (night). This scored 67/100 on: Off-hours access (night); login on high-sensitivity HRIS failed; Cross-department / ungranted access to HRIS by Finance; Stale account (days_inactive=30); Elevated privilege (power-user) at night. The combination is consistent with potential insider risk and warrants review.",
+    "recommended_actions": [
+      "Block/quarantine the export and review the data destination for exfiltration",
+      "Verify business justification for Finance access to HRIS",
+      "Review the account's privileged-access grants and recent admin activity"
+    ],
+    "suppression": "Month-end Finance close (severity downgraded)"
+  },
+  {
+    "rank": 14,
+    "incident_id": 376,
+    "risk_score": 67,
+    "severity": "CRITICAL",
+    "user": "timothy.jo",
+    "role": "Engineer, Engineering",
+    "privilege": "user",
+    "timestamp": "2026-01-01 02:56:00+00:00",
+    "event": "admin_operation on Customer_Vault (high), success, night",
+    "dimension_scores": {
+      "dim1_time": 20,
+      "dim2_action_sensitivity": 18,
+      "dim3_resource": 25,
+      "dim4_stale": 4,
+      "dim5_privilege": 0
+    },
+    "anomaly_signals": [
+      "Off-hours access (night)",
+      "admin_operation on high-sensitivity Customer_Vault",
+      "Cross-department / ungranted access to Customer_Vault by Engineering",
+      "Stale account (days_inactive=11)"
+    ],
+    "confidence": 83,
+    "narrative_source": "fallback",
+    "narrative": "timothy.jo (Engineer in Engineering, user) performed admin_operation on high-sensitivity Customer_Vault at 2026-01-01 02:56:00+00:00 (night). This scored 67/100 on: Off-hours access (night); admin_operation on high-sensitivity Customer_Vault; Cross-department / ungranted access to Customer_Vault by Engineering; Stale account (days_inactive=11). The combination is consistent with potential insider risk and warrants review.",
+    "recommended_actions": [
+      "Block/quarantine the export and review the data destination for exfiltration",
+      "Verify business justification for Engineering access to Customer_Vault",
+      "Confirm the account is still required; disable if the user has left or is dormant"
+    ],
+    "suppression": null
+  },
+  {
+    "rank": 15,
+    "incident_id": 832,
+    "risk_score": 66,
+    "severity": "CRITICAL",
+    "user": "isha.ghosh",
+    "role": "Manager, IT",
+    "privilege": "power-user",
+    "timestamp": "2026-03-06 10:54:06+00:00",
+    "event": "sql_query on PROD_DB (high), success, night",
+    "dimension_scores": {
+      "dim1_time": 10,
+      "dim2_action_sensitivity": 8,
+      "dim3_resource": 25,
+      "dim4_stale": 8,
+      "dim5_privilege": 15
+    },
+    "anomaly_signals": [
+      "Off-hours access (night)",
+      "sql_query on high-sensitivity PROD_DB",
+      "Cross-department / ungranted access to PROD_DB by IT",
+      "Stale account (days_inactive=44)",
+      "Elevated privilege (power-user) at night"
+    ],
+    "confidence": 83,
+    "narrative_source": "fallback",
+    "narrative": "isha.ghosh (Manager in IT, power-user) performed sql_query on high-sensitivity PROD_DB at 2026-03-06 10:54:06+00:00 (night). This scored 66/100 on: Off-hours access (night); sql_query on high-sensitivity PROD_DB; Cross-department / ungranted access to PROD_DB by IT; Stale account (days_inactive=44); Elevated privilege (power-user) at night. The combination is consistent with potential insider risk and warrants review.",
+    "recommended_actions": [
+      "Block/quarantine the export and review the data destination for exfiltration",
+      "Verify business justification for IT access to PROD_DB",
+      "Review the account's privileged-access grants and recent admin activity"
+    ],
+    "suppression": null
+  },
+  {
+    "rank": 16,
+    "incident_id": 446,
+    "risk_score": 66,
+    "severity": "CRITICAL",
+    "user": "kevin.ramirez",
+    "role": "Architect, Legal",
+    "privilege": "power-user",
+    "timestamp": "2026-01-26 10:54:05+00:00",
+    "event": "sql_query on Customer_Vault (high), success, night",
+    "dimension_scores": {
+      "dim1_time": 10,
+      "dim2_action_sensitivity": 8,
+      "dim3_resource": 25,
+      "dim4_stale": 8,
+      "dim5_privilege": 15
+    },
+    "anomaly_signals": [
+      "Off-hours access (night)",
+      "sql_query on high-sensitivity Customer_Vault",
+      "Cross-department / ungranted access to Customer_Vault by Legal",
+      "Stale account (days_inactive=46)",
+      "Elevated privilege (power-user) at night"
+    ],
+    "confidence": 83,
+    "narrative_source": "fallback",
+    "narrative": "kevin.ramirez (Architect in Legal, power-user) performed sql_query on high-sensitivity Customer_Vault at 2026-01-26 10:54:05+00:00 (night). This scored 66/100 on: Off-hours access (night); sql_query on high-sensitivity Customer_Vault; Cross-department / ungranted access to Customer_Vault by Legal; Stale account (days_inactive=46); Elevated privilege (power-user) at night. The combination is consistent with potential insider risk and warrants review.",
+    "recommended_actions": [
+      "Block/quarantine the export and review the data destination for exfiltration",
+      "Verify business justification for Legal access to Customer_Vault",
+      "Review the account's privileged-access grants and recent admin activity"
+    ],
+    "suppression": null
+  },
+  {
+    "rank": 17,
+    "incident_id": 526,
+    "risk_score": 66,
+    "severity": "CRITICAL",
+    "user": "meera.burke",
+    "role": "Executive, Operations",
+    "privilege": "power-user",
+    "timestamp": "2026-02-01 10:54:06+00:00",
+    "event": "sql_query on GL_System (high), success, night",
+    "dimension_scores": {
+      "dim1_time": 10,
+      "dim2_action_sensitivity": 8,
+      "dim3_resource": 25,
+      "dim4_stale": 8,
+      "dim5_privilege": 15
+    },
+    "anomaly_signals": [
+      "Off-hours access (night)",
+      "sql_query on high-sensitivity GL_System",
+      "Cross-department / ungranted access to GL_System by Operations",
+      "Stale account (days_inactive=59)",
+      "Elevated privilege (power-user) at night"
+    ],
+    "confidence": 83,
+    "narrative_source": "fallback",
+    "narrative": "meera.burke (Executive in Operations, power-user) performed sql_query on high-sensitivity GL_System at 2026-02-01 10:54:06+00:00 (night). This scored 66/100 on: Off-hours access (night); sql_query on high-sensitivity GL_System; Cross-department / ungranted access to GL_System by Operations; Stale account (days_inactive=59); Elevated privilege (power-user) at night. The combination is consistent with potential insider risk and warrants review.",
+    "recommended_actions": [
+      "Block/quarantine the export and review the data destination for exfiltration",
+      "Verify business justification for Operations access to GL_System",
+      "Review the account's privileged-access grants and recent admin activity"
+    ],
+    "suppression": null
+  },
+  {
+    "rank": 18,
+    "incident_id": 328,
+    "risk_score": 66,
+    "severity": "CRITICAL",
+    "user": "nicholas.romano",
+    "role": "Officer, Security",
+    "privilege": "power-user",
+    "timestamp": "2025-11-26 21:37:00+00:00",
+    "event": "api_call on Customer_Vault (high), success, night",
+    "dimension_scores": {
+      "dim1_time": 10,
+      "dim2_action_sensitivity": 8,
+      "dim3_resource": 25,
+      "dim4_stale": 8,
+      "dim5_privilege": 15
+    },
+    "anomaly_signals": [
+      "Off-hours access (night)",
+      "api_call on high-sensitivity Customer_Vault",
+      "Cross-department / ungranted access to Customer_Vault by Security",
+      "Stale account (days_inactive=52)",
+      "Elevated privilege (power-user) at night"
+    ],
+    "confidence": 83,
+    "narrative_source": "fallback",
+    "narrative": "nicholas.romano (Officer in Security, power-user) performed api_call on high-sensitivity Customer_Vault at 2025-11-26 21:37:00+00:00 (night). This scored 66/100 on: Off-hours access (night); api_call on high-sensitivity Customer_Vault; Cross-department / ungranted access to Customer_Vault by Security; Stale account (days_inactive=52); Elevated privilege (power-user) at night. The combination is consistent with potential insider risk and warrants review.",
+    "recommended_actions": [
+      "Block/quarantine the export and review the data destination for exfiltration",
+      "Verify business justification for Security access to Customer_Vault",
+      "Review the account's privileged-access grants and recent admin activity"
+    ],
+    "suppression": null
+  },
+  {
+    "rank": 19,
+    "incident_id": 1181,
+    "risk_score": 66,
+    "severity": "CRITICAL",
+    "user": "nicholas.romano",
+    "role": "Officer, Security",
+    "privilege": "power-user",
+    "timestamp": "2026-04-18 10:54:05+00:00",
+    "event": "api_call on HRIS (high), success, night",
+    "dimension_scores": {
+      "dim1_time": 10,
+      "dim2_action_sensitivity": 8,
+      "dim3_resource": 25,
+      "dim4_stale": 8,
+      "dim5_privilege": 15
+    },
+    "anomaly_signals": [
+      "Off-hours access (night)",
+      "api_call on high-sensitivity HRIS",
+      "Cross-department / ungranted access to HRIS by Security",
+      "Stale account (days_inactive=52)",
+      "Elevated privilege (power-user) at night"
+    ],
+    "confidence": 83,
+    "narrative_source": "fallback",
+    "narrative": "nicholas.romano (Officer in Security, power-user) performed api_call on high-sensitivity HRIS at 2026-04-18 10:54:05+00:00 (night). This scored 66/100 on: Off-hours access (night); api_call on high-sensitivity HRIS; Cross-department / ungranted access to HRIS by Security; Stale account (days_inactive=52); Elevated privilege (power-user) at night. The combination is consistent with potential insider risk and warrants review.",
+    "recommended_actions": [
+      "Block/quarantine the export and review the data destination for exfiltration",
+      "Verify business justification for Security access to HRIS",
+      "Review the account's privileged-access grants and recent admin activity"
+    ],
+    "suppression": null
+  },
+  {
+    "rank": 20,
+    "incident_id": 1167,
+    "risk_score": 66,
+    "severity": "CRITICAL",
+    "user": "kevin.ramirez",
+    "role": "Architect, Legal",
+    "privilege": "power-user",
+    "timestamp": "2026-04-16 10:54:06+00:00",
+    "event": "file_access on GL_System (high), success, night",
+    "dimension_scores": {
+      "dim1_time": 10,
+      "dim2_action_sensitivity": 8,
+      "dim3_resource": 25,
+      "dim4_stale": 8,
+      "dim5_privilege": 15
+    },
+    "anomaly_signals": [
+      "Off-hours access (night)",
+      "file_access on high-sensitivity GL_System",
+      "Cross-department / ungranted access to GL_System by Legal",
+      "Stale account (days_inactive=46)",
+      "Elevated privilege (power-user) at night"
+    ],
+    "confidence": 83,
+    "narrative_source": "fallback",
+    "narrative": "kevin.ramirez (Architect in Legal, power-user) performed file_access on high-sensitivity GL_System at 2026-04-16 10:54:06+00:00 (night). This scored 66/100 on: Off-hours access (night); file_access on high-sensitivity GL_System; Cross-department / ungranted access to GL_System by Legal; Stale account (days_inactive=46); Elevated privilege (power-user) at night. The combination is consistent with potential insider risk and warrants review.",
+    "recommended_actions": [
+      "Block/quarantine the export and review the data destination for exfiltration",
+      "Verify business justification for Legal access to GL_System",
+      "Review the account's privileged-access grants and recent admin activity"
+    ],
+    "suppression": null
+  },
+  {
+    "rank": 21,
+    "incident_id": 1037,
+    "risk_score": 65,
+    "severity": "CRITICAL",
+    "user": "aditya.taylor",
+    "role": "Manager, Marketing",
+    "privilege": "power-user",
+    "timestamp": "2026-03-31 10:54:06+00:00",
+    "event": "export_data on PROD_DB (high), success, unusual_hours",
+    "dimension_scores": {
+      "dim1_time": 8,
+      "dim2_action_sensitivity": 20,
+      "dim3_resource": 25,
+      "dim4_stale": 4,
+      "dim5_privilege": 8
+    },
+    "anomaly_signals": [
+      "Off-hours access (unusual_hours)",
+      "export_data on high-sensitivity PROD_DB",
+      "Cross-department / ungranted access to PROD_DB by Marketing",
+      "Stale account (days_inactive=28)",
+      "Elevated privilege (power-user) at unusual_hours"
+    ],
+    "confidence": 82,
+    "narrative_source": "fallback",
+    "narrative": "aditya.taylor (Manager in Marketing, power-user) performed export_data on high-sensitivity PROD_DB at 2026-03-31 10:54:06+00:00 (unusual_hours). This scored 65/100 on: Off-hours access (unusual_hours); export_data on high-sensitivity PROD_DB; Cross-department / ungranted access to PROD_DB by Marketing; Stale account (days_inactive=28); Elevated privilege (power-user) at unusual_hours. The combination is consistent with potential insider risk and warrants review.",
+    "recommended_actions": [
+      "Block/quarantine the export and review the data destination for exfiltration",
+      "Verify business justification for Marketing access to PROD_DB",
+      "Review the account's privileged-access grants and recent admin activity"
+    ],
+    "suppression": null
+  },
+  {
+    "rank": 22,
+    "incident_id": 991,
+    "risk_score": 65,
+    "severity": "CRITICAL",
+    "user": "daniel.colombo",
+    "role": "Specialist, Sales",
+    "privilege": "power-user",
+    "timestamp": "2026-03-26 10:54:05+00:00",
+    "event": "admin_operation on HRIS (high), success, weekend",
+    "dimension_scores": {
+      "dim1_time": 6,
+      "dim2_action_sensitivity": 18,
+      "dim3_resource": 25,
+      "dim4_stale": 8,
+      "dim5_privilege": 8
+    },
+    "anomaly_signals": [
+      "Off-hours access (weekend)",
+      "admin_operation on high-sensitivity HRIS",
+      "Cross-department / ungranted access to HRIS by Sales",
+      "Stale account (days_inactive=52)",
+      "Elevated privilege (power-user) at weekend"
+    ],
+    "confidence": 82,
+    "narrative_source": "fallback",
+    "narrative": "daniel.colombo (Specialist in Sales, power-user) performed admin_operation on high-sensitivity HRIS at 2026-03-26 10:54:05+00:00 (weekend). This scored 65/100 on: Off-hours access (weekend); admin_operation on high-sensitivity HRIS; Cross-department / ungranted access to HRIS by Sales; Stale account (days_inactive=52); Elevated privilege (power-user) at weekend. The combination is consistent with potential insider risk and warrants review.",
+    "recommended_actions": [
+      "Block/quarantine the export and review the data destination for exfiltration",
+      "Verify business justification for Sales access to HRIS",
+      "Review the account's privileged-access grants and recent admin activity"
+    ],
+    "suppression": null
+  },
+  {
+    "rank": 23,
+    "incident_id": 346,
+    "risk_score": 65,
+    "severity": "CRITICAL",
+    "user": "thomas.lewis",
+    "role": "Director, Finance",
+    "privilege": "power-user",
+    "timestamp": "2025-12-07 13:11:00+00:00",
+    "event": "export_data on HRIS (high), success, unusual_hours",
+    "dimension_scores": {
+      "dim1_time": 4,
+      "dim2_action_sensitivity": 20,
+      "dim3_resource": 25,
+      "dim4_stale": 8,
+      "dim5_privilege": 8
+    },
+    "anomaly_signals": [
+      "Off-hours access (unusual_hours)",
+      "export_data on high-sensitivity HRIS",
+      "Cross-department / ungranted access to HRIS by Finance",
+      "Stale account (days_inactive=58)",
+      "Elevated privilege (power-user) at unusual_hours"
+    ],
+    "confidence": 82,
+    "narrative_source": "fallback",
+    "narrative": "thomas.lewis (Director in Finance, power-user) performed export_data on high-sensitivity HRIS at 2025-12-07 13:11:00+00:00 (unusual_hours). This scored 65/100 on: Off-hours access (unusual_hours); export_data on high-sensitivity HRIS; Cross-department / ungranted access to HRIS by Finance; Stale account (days_inactive=58); Elevated privilege (power-user) at unusual_hours. The combination is consistent with potential insider risk and warrants review.",
+    "recommended_actions": [
+      "Block/quarantine the export and review the data destination for exfiltration",
+      "Verify business justification for Finance access to HRIS",
+      "Review the account's privileged-access grants and recent admin activity"
+    ],
+    "suppression": null
+  },
+  {
+    "rank": 24,
+    "incident_id": 4,
+    "risk_score": 65,
+    "severity": "CRITICAL",
+    "user": "xiulan.colombo",
+    "role": "Administrator, Compliance",
+    "privilege": "user",
+    "timestamp": "2025-04-23 06:57:00+00:00",
+    "event": "export_data on GL_System (high), success, weekend",
+    "dimension_scores": {
+      "dim1_time": 12,
+      "dim2_action_sensitivity": 20,
+      "dim3_resource": 25,
+      "dim4_stale": 8,
+      "dim5_privilege": 0
+    },
+    "anomaly_signals": [
+      "Off-hours access (weekend)",
+      "export_data on high-sensitivity GL_System",
+      "Cross-department / ungranted access to GL_System by Compliance",
+      "Stale account (days_inactive=34)"
+    ],
+    "confidence": 82,
+    "narrative_source": "fallback",
+    "narrative": "xiulan.colombo (Administrator in Compliance, user) performed export_data on high-sensitivity GL_System at 2025-04-23 06:57:00+00:00 (weekend). This scored 65/100 on: Off-hours access (weekend); export_data on high-sensitivity GL_System; Cross-department / ungranted access to GL_System by Compliance; Stale account (days_inactive=34). The combination is consistent with potential insider risk and warrants review.",
+    "recommended_actions": [
+      "Block/quarantine the export and review the data destination for exfiltration",
+      "Verify business justification for Compliance access to GL_System",
+      "Confirm the account is still required; disable if the user has left or is dormant"
+    ],
+    "suppression": null
+  },
+  {
+    "rank": 25,
+    "incident_id": 210,
+    "risk_score": 65,
+    "severity": "CRITICAL",
+    "user": "nikhil.rao",
+    "role": "Lead, Executive",
+    "privilege": "admin",
+    "timestamp": "2025-09-07 18:51:00+00:00",
+    "event": "export_data on GL_System (high), success, unusual_hours",
+    "dimension_scores": {
+      "dim1_time": 4,
+      "dim2_action_sensitivity": 20,
+      "dim3_resource": 25,
+      "dim4_stale": 8,
+      "dim5_privilege": 8
+    },
+    "anomaly_signals": [
+      "Off-hours access (unusual_hours)",
+      "export_data on high-sensitivity GL_System",
+      "Cross-department / ungranted access to GL_System by Executive",
+      "Stale account (days_inactive=56)",
+      "Elevated privilege (admin) at unusual_hours"
+    ],
+    "confidence": 82,
+    "narrative_source": "fallback",
+    "narrative": "nikhil.rao (Lead in Executive, admin) performed export_data on high-sensitivity GL_System at 2025-09-07 18:51:00+00:00 (unusual_hours). This scored 65/100 on: Off-hours access (unusual_hours); export_data on high-sensitivity GL_System; Cross-department / ungranted access to GL_System by Executive; Stale account (days_inactive=56); Elevated privilege (admin) at unusual_hours. The combination is consistent with potential insider risk and warrants review.",
+    "recommended_actions": [
+      "Block/quarantine the export and review the data destination for exfiltration",
+      "Verify business justification for Executive access to GL_System",
+      "Review the account's privileged-access grants and recent admin activity"
+    ],
+    "suppression": null
+  }
+]

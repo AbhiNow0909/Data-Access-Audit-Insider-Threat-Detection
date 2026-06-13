@@ -98,6 +98,8 @@ def _get_model():
         if not key or key == "your_api_key_here":
             _MODEL_CACHE.append(None)
             return None
+        import warnings
+        warnings.filterwarnings("ignore", category=FutureWarning, module="google")
         import google.generativeai as genai
         genai.configure(api_key=key)
         model = genai.GenerativeModel(config.LLM_MODEL)
