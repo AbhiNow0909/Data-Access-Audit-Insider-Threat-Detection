@@ -33,6 +33,7 @@ Importable with zero side effects.
 """
 from __future__ import annotations
 
+import numpy as np
 import pandas as pd
 
 import config
@@ -96,13 +97,66 @@ def derive_label(row: pd.Series, profile: pd.Series | None = None) -> dict:
     return dict(_NORMAL)
 
 
-def label_all_events(df: pd.DataFrame, profiles: pd.DataFrame | None = None) -> pd.DataFrame:
+def _label_frame_reference(df: pd.DataFrame) -> pd.DataFrame:
+    """Row-loop labeler — the reference oracle."""
+    return pd.DataFrame([derive_label(row) for _, row in df.iterrows()], index=df.index)
+
+
+def _label_frame_vectorized(df: pd.DataFrame) -> pd.DataFrame:
+    """Vectorized labeler — output-identical to the reference (tests/test_parity)."""
+    n = len(df)
+    action = df[config.COL_ACTION].to_numpy()
+    sens = df[config.COL_SENSITIVITY].to_numpy()
+    tc = df[config.COL_TIME_CLASS].to_numpy()
+    status = df[config.COL_STATUS].to_numpy()
+    priv = df[config.COL_PRIVILEGE].to_numpy()
+    resource = df[config.COL_RESOURCE].to_numpy()
+    dept = df[config.COL_DEPARTMENT]
+    days = pd.to_numeric(df[config.COL_DAYS_INACTIVE], errors="coerce").fillna(0).to_numpy()
+    sensitive = np.isin(sens, ["high", "medium"])
+    off = np.isin(tc, list(_OFF_HOURS))
+
+    atype = np.array([None] * n, dtype=object)
+    sev = np.array(["NONE"] * n, dtype=object)
+    done = np.zeros(n, dtype=bool)
+
+    def assign(mask: np.ndarray, t: str, s: str) -> None:
+        m = mask & ~done
+        atype[m] = t
+        sev[m] = s
+        done[m] = True
+
+    # Archetypes in priority order (first match wins, via ``done``).
+    exp_sens = (action == "export_data") & sensitive
+    assign(exp_sens & (tc == "night"), "OFFHOURS_SENSITIVE_EXPORT", "CRITICAL")
+    assign(exp_sens & np.isin(tc, ["unusual_hours", "weekend"]), "OFFHOURS_SENSITIVE_EXPORT", "HIGH")
+
+    is_cross = np.zeros(n, dtype=bool)
+    for res, owners in config.RESOURCE_OWNER_DEPARTMENTS.items():
+        is_cross |= (resource == res) & (~dept.isin(owners)).to_numpy()
+    assign(is_cross & (sens == "high"), "CROSS_DEPARTMENT_SENSITIVE", "HIGH")
+
+    assign(np.isin(priv, list(_ELEVATED)) & (action == "admin_operation")
+           & (tc == "night") & sensitive, "PRIVILEGED_NIGHT_ADMIN_OP", "HIGH")
+
+    assign((days > LABEL_STALE_DAYS) & (sens == "high") & (off | (action == "export_data")),
+           "STALE_ACCOUNT_SENSITIVE", "MEDIUM")
+
+    assign((status == "failure") & (sens == "high"), "FAILED_SENSITIVE_ACCESS", "MEDIUM")
+
+    return pd.DataFrame({"is_anomaly": done, "anomaly_type": atype, "derived_severity": sev},
+                        index=df.index)
+
+
+def label_all_events(df: pd.DataFrame, profiles: pd.DataFrame | None = None,
+                     vectorized: bool = True) -> pd.DataFrame:
     """Derive labels for every event, write config.LABELS_CSV, return labeled frame.
 
-    The returned frame shares ``df``'s index so the evaluator can align labels to
-    predictions positionally. ``profiles`` is unused (enriched row carries them).
+    Vectorized by default (proven identical to the row-loop reference by
+    tests/test_parity). The returned frame shares ``df``'s index so the evaluator
+    can align labels to predictions positionally. ``profiles`` is unused.
     """
-    labels = pd.DataFrame([derive_label(row) for _, row in df.iterrows()], index=df.index)
+    labels = (_label_frame_vectorized if vectorized else _label_frame_reference)(df)
     out = pd.concat([df, labels], axis=1)
 
     config.DATA_OUTPUT.mkdir(parents=True, exist_ok=True)

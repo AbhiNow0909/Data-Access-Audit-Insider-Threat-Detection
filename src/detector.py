@@ -13,6 +13,7 @@ Composite = sum, clipped to 0-100 (int). Importable with zero side effects.
 """
 from __future__ import annotations
 
+import numpy as np
 import pandas as pd
 
 import config
@@ -170,16 +171,8 @@ def compute_risk_score(row: pd.Series, baseline: dict | None = None) -> tuple[in
     return score, build_anomaly_signals(row, dims)
 
 
-def score_all_events(
-    df: pd.DataFrame,
-    baselines: dict[str, dict],
-    write: bool = True,
-) -> pd.DataFrame:
-    """Score every event; add dim1..dim5, risk_score, severity, anomaly_signals.
-
-    ``df`` is the enriched frame from src.ingestor. Writes config.SCORED_CSV when
-    ``write`` is True (creating data/output/ if needed).
-    """
+def _score_all_events_reference(df: pd.DataFrame, baselines: dict[str, dict]) -> pd.DataFrame:
+    """Row-loop scorer — the readable reference oracle (see _vectorized for the fast path)."""
     out = df.copy()
     dim_rows, scores, signal_strs = [], [], []
     for _, row in out.iterrows():
@@ -195,7 +188,114 @@ def score_all_events(
     out["risk_score"] = scores
     out["severity"] = [severity_from_score(s) for s in scores]
     out["anomaly_signals"] = signal_strs
+    return out
 
+
+def _habitual_counts(df: pd.DataFrame, baselines: dict[str, dict]) -> np.ndarray:
+    """Per-row count of how often the user did this event's time_classification."""
+    lut: dict[tuple, int] = {}
+    for uid, b in baselines.items():
+        for tc, count in b.get("typical_time_classifications", {}).items():
+            lut[(uid, tc)] = count
+    uids = df[config.COL_USER_ID].to_numpy()
+    tcs = df[config.COL_TIME_CLASS].to_numpy()
+    return np.array([lut.get((u, t), 0) for u, t in zip(uids, tcs)])
+
+
+def _score_all_events_vectorized(df: pd.DataFrame, baselines: dict[str, dict]) -> pd.DataFrame:
+    """Vectorized scorer — output-identical to the reference (proven by tests/test_parity)."""
+    out = df.copy()
+    n = len(out)
+    sens = out[config.COL_SENSITIVITY].to_numpy()
+    tc = out[config.COL_TIME_CLASS].to_numpy()
+    action = out[config.COL_ACTION].to_numpy()
+    resource = out[config.COL_RESOURCE].to_numpy()
+    dept = out[config.COL_DEPARTMENT]
+    status = out[config.COL_STATUS].to_numpy()
+    priv = out[config.COL_PRIVILEGE].to_numpy()
+
+    # Dim 1 — time, halved when habitual (>=2 of that time-class in the user's history)
+    base1 = out[config.COL_TIME_CLASS].map(_TIME_POINTS).fillna(0).to_numpy().astype(int)
+    habit = _habitual_counts(out, baselines) >= 2
+    dim1 = np.where((base1 > 0) & habit, base1 // 2, base1).astype(int)
+
+    # Dim 2 — action class x sensitivity, +failed bonus, capped 25
+    cls = pd.Series(action).map(_ACTION_CLASS).fillna("read").to_numpy()
+    base2 = np.array([_ACTION_SENS_POINTS[c].get(s, 0) for c, s in zip(cls, sens)], dtype=int)
+    base2 = base2 + np.where(status == "failure", _FAILED_BONUS, 0)
+    dim2 = np.minimum(base2, 25).astype(int)
+
+    # Dim 3 — max(cross-department, grant-violation) scaled by sensitivity, capped 25
+    sens_cross = pd.Series(sens).map(_SENS_CROSS_POINTS).fillna(0).to_numpy().astype(int)
+    sens_grant = pd.Series(sens).map(_SENS_GRANT_POINTS).fillna(0).to_numpy().astype(int)
+    cross_pts = np.zeros(n, dtype=int)
+    for res, owners in config.RESOURCE_OWNER_DEPARTMENTS.items():
+        m = (resource == res) & (~dept.isin(owners)).to_numpy()
+        cross_pts[m] = sens_cross[m]
+    grant_pts = np.zeros(n, dtype=int)
+    sal = out["systems_access_list"].to_numpy() if "systems_access_list" in out.columns \
+        else np.array([[]] * n, dtype=object)
+    for res in config.GRANT_CHECKABLE_RESOURCES:
+        not_granted = np.array([res not in (lst or []) for lst in sal])
+        m = (resource == res) & not_granted
+        grant_pts[m] = sens_grant[m]
+    dim3 = np.minimum(np.maximum(cross_pts, grant_pts), 25).astype(int)
+
+    # Dim 4 — stale account
+    days = pd.to_numeric(out[config.COL_DAYS_INACTIVE], errors="coerce").fillna(0).to_numpy()
+    ia = out[config.COL_IS_ACTIVE]
+    inactive = (ia == False).to_numpy() | (ia.astype(str).str.lower() == "false").to_numpy()  # noqa: E712
+    dim4 = np.select([inactive, days > 90, days > 30, days > 7], [15, 12, 8, 4], default=0).astype(int)
+
+    # Dim 5 — elevated privilege at off-hours
+    elevated = np.isin(priv, list(_ELEVATED))
+    dim5 = np.where(
+        elevated,
+        np.select([tc == "night", np.isin(tc, ["unusual_hours", "weekend"])], [15, 8], default=0),
+        0,
+    ).astype(int)
+
+    score = np.minimum(dim1 + dim2 + dim3 + dim4 + dim5, 100).astype(int)
+    severity = np.select([score >= 60, score >= 50, score >= 40],
+                         ["CRITICAL", "HIGH", "MEDIUM"], default="LOW")
+
+    # Anomaly signals — built to match build_anomaly_signals() exactly
+    fail = np.where(status == "failure", " failed", "")
+    days_raw = out[config.COL_DAYS_INACTIVE].to_numpy()
+    dept_v = dept.to_numpy()
+    s1 = np.array([f"Off-hours access ({t})" for t in tc], dtype=object)
+    s2 = np.array([f"{a} on {s}-sensitivity {r}{f}" for a, s, r, f in zip(action, sens, resource, fail)], dtype=object)
+    s3 = np.array([f"Cross-department / ungranted access to {r} by {d}" for r, d in zip(resource, dept_v)], dtype=object)
+    s4 = np.array([f"Stale account (days_inactive={d})" for d in days_raw], dtype=object)
+    s5 = np.array([f"Elevated privilege ({p}) at {t}" for p, t in zip(priv, tc)], dtype=object)
+    sigs = [s1, s2, s3, s4, s5]
+    masks = [dim1 > 0, dim2 > 0, dim3 > 0, dim4 > 0, dim5 > 0]
+    signals = ["; ".join(sigs[i][j] for i in range(5) if masks[i][j]) for j in range(n)]
+
+    out["dim1_time"] = dim1
+    out["dim2_action_sensitivity"] = dim2
+    out["dim3_resource"] = dim3
+    out["dim4_stale"] = dim4
+    out["dim5_privilege"] = dim5
+    out["risk_score"] = score
+    out["severity"] = severity
+    out["anomaly_signals"] = signals
+    return out
+
+
+def score_all_events(
+    df: pd.DataFrame,
+    baselines: dict[str, dict],
+    write: bool = True,
+    vectorized: bool = True,
+) -> pd.DataFrame:
+    """Score every event; add dim1..dim5, risk_score, severity, anomaly_signals.
+
+    Uses the vectorized path by default (proven output-identical to the row-loop
+    reference by tests/test_parity). Set ``vectorized=False`` for the reference.
+    Writes config.SCORED_CSV when ``write`` is True.
+    """
+    out = (_score_all_events_vectorized if vectorized else _score_all_events_reference)(df, baselines)
     if write:
         config.DATA_OUTPUT.mkdir(parents=True, exist_ok=True)
         out.to_csv(config.SCORED_CSV, index=False)

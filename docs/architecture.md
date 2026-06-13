@@ -49,3 +49,12 @@ defensible, documented choices close the gap to target:
    threshold 40 sits just under the dense true-anomaly cluster at score 41.
 
 **Result:** Precision 0.764, Recall 0.740, F1 0.752; Tier-1 critical recall 81%.
+
+### Performance / scalability
+The scorer, suppressor and labeler each have a **vectorized** path (pandas/numpy)
+as the default, plus a row-loop **reference** kept for verification. The two are
+proven output-identical by `tests/test_parity.py` (all 15 output columns, all
+rows, identical metrics). Vectorization is ~18x faster than the row loop and
+extrapolates to **~8s for 1M events on a single core** (target <120s). The
+per-event scoring is stateless, so it also parallelizes trivially (Spark/Kafka
+plan in notebook 02 §6).

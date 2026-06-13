@@ -614,3 +614,8 @@ jupyter notebook notebooks/
 - [x] **Steps 1–13 COMPLETE.** Targets met: P 0.764 / R 0.740 / F1 0.752.
       Backend + dashboard + notebooks + incident report all built and verified.
       Tagged v1.0.0.
+- [x] **Performance:** detector/suppressor/labeler vectorized (pandas/numpy),
+      proven output-identical to the row-loop reference by tests/test_parity.py
+      (all 15 columns, identical metrics). ~18x faster; ~8s/1M events single core
+      (target <120s). Stale Step-5 suppressor inline test (pre-band-change)
+      fixed to the current severity bands.
