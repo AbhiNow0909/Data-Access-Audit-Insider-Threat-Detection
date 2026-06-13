@@ -172,15 +172,20 @@ Layer 2  INGESTION & NORMALIZATION  [src/ingestor.py]
          Output: single enriched dataframe in memory
               ↓
 Layer 3  BEHAVIORAL BASELINE ENGINE  [src/baseline.py]
-         Training window: chronologically first 30 days of log data
+         Training window: FULL per-user history (data is ~12 events/user/year,
+           so a 30-day window leaves ~64% of users with no baseline). A cohort
+           baseline (grouped by privilege_level) is the fallback for thin/zero-
+           history users and admins, widening their expected patterns.
          Per-user baseline dict contains:
-           - seen_ips: set of source_ip values observed
+           - seen_ips: set of source_ip values (own + cohort fallback)
            - typical_time_classifications: Counter of time_classification values
            - typical_actions: Counter of action values
-           - typical_resources: set of resources accessed
+           - typical_resources: set of resources accessed (own + cohort fallback)
+           - typical_sensitivities: Counter of resource_sensitivity values
            - tenure_months: derived from hire_date
-         Separate baseline profiles for:
-           admin (privilege_level=admin), standard user, inactive account
+           - low_confidence: True when event_count < BASELINE_MIN_EVENTS
+         Cohort fallback profiles by privilege_level:
+           admin / power-user / user / service-account
               ↓
 Layer 4  ANOMALY SCORING + FP SUPPRESSION
          [src/detector.py + src/suppressor.py]
@@ -396,15 +401,20 @@ git push origin main
 - [ ] Verify: no duplicate columns, all timestamps UTC, `systems_access` is list type
 - [ ] **Commit:** `feat: data ingestion and normalization layer`
 
-### Step 3 — Behavioral Baseline Engine  (src/baseline.py)
-- [ ] `build_user_baseline(user_events_df, profile_row) -> dict`
+### Step 3 — Behavioral Baseline Engine  (src/baseline.py)  [DONE]
+- [x] `build_user_baseline(user_events, profile_row, cohort_baseline) -> dict`
       Returns: `seen_ips` (set), `typical_time_classifications` (Counter),
-      `typical_actions` (Counter), `typical_resources` (set), `tenure_months` (float)
-- [ ] `build_all_baselines(df, profiles) -> dict[str, dict]`
-      Key: user_id. Training window: chronologically first 30 days of log data.
-- [ ] Handle users with < 7 days of history: mark baseline as `low_confidence=True`
-- [ ] Separate logic for `privilege_level=admin` — wider expected patterns
-- [ ] **Commit:** `feat: per-user behavioral baseline engine`
+      `typical_actions` (Counter), `typical_resources` (set),
+      `typical_sensitivities` (Counter), `tenure_months` (float),
+      `is_admin`, `event_count`, `low_confidence`
+- [x] `build_cohort_baselines(df) -> dict` — aggregated fallback per privilege_level
+- [x] `build_all_baselines(df, profiles) -> dict[str, dict]`
+      Key: user_id. Training window: FULL per-user history (data too sparse for
+      a 30-day window — see config.BASELINE_MIN_EVENTS).
+- [x] Thin users (`event_count < BASELINE_MIN_EVENTS`): `low_confidence=True`,
+      widened via cohort fallback
+- [x] `privilege_level=admin` — cohort-widened expected patterns
+- [x] **Commit:** `feat: per-user behavioral baseline engine`
 
 ### Step 4 — Anomaly Scoring Engine  (src/detector.py)
 - [ ] `score_time(row) -> int` — Dim 1, max 20, uses `time_classification`

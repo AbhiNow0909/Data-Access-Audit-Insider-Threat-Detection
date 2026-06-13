@@ -23,8 +23,13 @@ source_ip, time_classification`
 systems_access, last_login, days_inactive, is_active, hire_date`
 
 ### Consequences for the design
-- **Baselines are learned from the logs**, not read from profile columns
-  (seen IPs, time-class distribution, typical resources, action mix per user).
+- **Baselines are learned from each user's FULL history** (not a 30-day window):
+  the data is ~12 events/user/year, so a fixed window leaves ~64% of users with
+  no baseline. A cohort baseline (by `privilege_level`) is the fallback for
+  thin/zero-history users and admins. See `src/baseline.py`.
+- **`source_ip` is effectively unique per event** (~1 IP per event), so the
+  "new IP" signal carries little information here; Dim 5 leans on
+  privilege x time rather than IP novelty (see `src/detector.py`).
 - **5-dimension scoring over real columns** (see CLAUDE.md for point matrices):
   (1) time, (2) action x sensitivity, (3) unauthorized system access vs
   `systems_access`, (4) stale/inactive account, (5) IP & privilege. The

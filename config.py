@@ -50,7 +50,10 @@ OFF_HOURS_CLASSES = {"night", "unusual_hours", "weekend"}
 FINANCE_DEPARTMENTS = {"Finance", "Accounting"}
 
 # --- Pipeline tunables -----------------------------------------------------
-BASELINE_WINDOW_DAYS = 30           # chronologically-first N days = training window
+# The data is sparse (~12 events/user/year), so a fixed 30-day training window
+# leaves most users with no baseline. Baselines are built from each user's FULL
+# history, with a cohort fallback (by privilege_level) for thin/zero users.
+BASELINE_MIN_EVENTS = 5             # below this a user's baseline is low_confidence
 RISK_FLAG_THRESHOLD = 50            # risk_score >= this is flagged / sent to LLM
 LLM_MODEL = "gemini-2.0-flash"
 
