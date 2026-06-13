@@ -527,22 +527,17 @@ All cells import from `src/` — zero logic redefined in notebook.
 - [x] Pre-run via nbconvert — 9 code cells, 0 errors, 4 plots, executed in order
 - [x] **Commit:** `feat: EDA and baseline analysis notebook`
 
-### Step 12 — Evaluation Notebook  (notebooks/02_anomaly_detection_evaluation.ipynb)
+### Step 12 — Evaluation Notebook  (notebooks/02_anomaly_detection_evaluation.ipynb)  [DONE]
 All cells import from `src/` — zero logic redefined.
-- [ ] Section 1: Labeling methodology — explain derive_label rules,
-      show label distribution, justify design decisions
-- [ ] Section 2: Detection results — load scored_incidents.csv,
-      show risk score distribution histogram
-- [ ] Section 3: Full evaluation report — call full_evaluation_report(),
-      display all three tiers, highlight P/R/F1 against targets
-- [ ] Section 4: FP suppression analysis — how many events suppressed,
-      by which rule, before/after comparison
-- [ ] Section 5: Example incidents — 5 detailed walkthroughs:
-      event → signals fired → score → Gemini narrative → recommended action
-- [ ] Section 6: Scaling architecture — document how system handles 1M+ daily events
-      (Kafka, Spark, async LLM batching, PostgreSQL partitioning)
-- [ ] Pre-run all cells — save with outputs visible
-- [ ] **Commit:** `feat: anomaly detection evaluation notebook`
+- [x] Section 1: Labeling methodology — archetype table, label distribution, non-circularity
+- [x] Section 2: Detection results — risk-score histogram by true label + means
+- [x] Section 3: Full evaluation report — full_evaluation_report() + confusion matrix +
+      per-severity recall (P 0.764 / R 0.740 / F1 0.752, targets met)
+- [x] Section 4: FP suppression analysis — events per rule, before/after flagged + severity
+- [x] Section 5: Example incidents — top-5 walkthroughs (event→signals→score→narrative→actions)
+- [x] Section 6: Scaling architecture — Kafka/Spark/Redis/async-LLM/Postgres + timing extrapolation
+- [x] Pre-run via nbconvert — 8 code cells, 0 errors, 4 plots, in order
+- [x] **Commit:** `feat: anomaly detection evaluation notebook`
 
 ### Step 13 — Final Polish & Submission
 - [ ] Verify `data/output/flagged_incidents.csv` has 20+ incidents with narratives
