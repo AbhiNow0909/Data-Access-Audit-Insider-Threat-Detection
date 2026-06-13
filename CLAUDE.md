@@ -466,19 +466,18 @@ Functions take the enriched row (profile columns already merged in by ingestor).
   detector (weights/threshold) so strong single-signal archetypes (cross-dept
   sensitive, stale-sensitive) clear the bar. Labels are fixed ground truth.
 
-### Step 7 — LLM Narrator  (src/llm_narrator.py)
-- [ ] Load `GEMINI_API_KEY` from `.env` via `python-dotenv`
-- [ ] `build_prompt(row, profile, baseline) -> str`
-      Uses exact prompt template from architecture section above
-- [ ] `generate_narrative(row, profile, baseline) -> dict`
-      Calls Gemini, parses JSON response, returns dict with
-      severity / confidence / narrative / recommended_actions
-- [ ] `generate_narrative_safe(row, profile, baseline) -> dict`
-      Wraps above in try/except — returns fallback dict on any API error
-- [ ] `narrate_flagged_incidents(scored_df, profiles, baselines) -> pd.DataFrame`
-      Filters risk_score >= 50, calls generate_narrative_safe per row,
-      adds narrative columns, writes to `config.FLAGGED_CSV`
-- [ ] **Commit:** `feat: Gemini LLM narrative generation`
+### Step 7 — LLM Narrator  (src/llm_narrator.py)  [DONE]
+- [x] `GEMINI_API_KEY` loaded from `.env` LAZILY (inside `_get_model`) so the
+      module imports with zero side effects and without the package installed
+- [x] `build_prompt(row, baseline) -> str` — exact template
+- [x] `generate_narrative(row, baseline) -> dict` — Gemini call + robust JSON parse
+- [x] `generate_narrative_safe(row, baseline) -> dict` — try Gemini, else a
+      deterministic rule-based fallback narrative (severity/confidence/narrative/
+      recommended_actions derived from the fired signals)
+- [x] `narrate_flagged_incidents(scored_df, baselines, limit=None) -> pd.DataFrame`
+      Filters risk >= RISK_FLAG_THRESHOLD, writes `config.FLAGGED_CSV`
+- [x] Result: 365 incidents narrated (fallback offline; Gemini auto-used when a
+      key is present). **Commit:** `feat: Gemini LLM narrative generation`
 
 ### Step 8 — Evaluation Module  (src/evaluator.py)  [DONE]
 - [x] `evaluate_known_anomalies(scored_df, labels_df) -> dict`
