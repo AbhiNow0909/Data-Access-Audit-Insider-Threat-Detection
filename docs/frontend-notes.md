@@ -11,6 +11,10 @@ npm run dev      # http://localhost:5173  (backend must be running on :8000)
 ```
 
 ## Components
+- **Overview** (default "Overview" tab) — recharts visuals: severity donut, risk-
+  score histogram (threshold-coloured), and flagged-incident breakdowns by
+  department / resource / time-of-day. Source: `GET /overview` (server-side
+  aggregation over all events, so charts aren't limited to the narrated top-N).
 - **MetricsPanel** — Precision / Recall / F1 cards with target ✓/✗, flagged
   volume + confusion counts, critical-recall. Source: `GET /metrics`.
 - **IncidentDashboard** — prioritized, clickable incident list with severity

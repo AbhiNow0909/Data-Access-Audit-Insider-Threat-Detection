@@ -157,6 +157,40 @@ def metrics() -> dict:
     return STATE["metrics"]
 
 
+@app.get("/overview")
+def overview() -> dict:
+    """Aggregate stats for the dashboard charts (computed over ALL events)."""
+    scored = STATE["scored"]
+    risk = "adjusted_risk_score"
+    thr = config.RISK_FLAG_THRESHOLD
+    flagged = scored[scored[risk] >= thr]
+
+    sev_order = ["CRITICAL", "HIGH", "MEDIUM", "LOW"]
+    sev_counts = scored["adjusted_severity"].value_counts().to_dict()
+    severity = [{"name": s, "count": int(sev_counts.get(s, 0))} for s in sev_order]
+
+    risk_histogram = []
+    for lo in range(0, 90, 10):
+        cnt = int(((scored[risk] >= lo) & (scored[risk] < lo + 10)).sum())
+        risk_histogram.append({"bin": f"{lo}-{lo + 9}", "count": cnt})
+
+    def counts(col: str, k: int | None = None) -> list[dict]:
+        vc = flagged[col].value_counts()
+        items = [{"name": str(i), "count": int(c)} for i, c in vc.items()]
+        return items[:k] if k else items
+
+    return {
+        "total": int(len(scored)),
+        "flagged": int(len(flagged)),
+        "threshold": thr,
+        "severity": severity,
+        "risk_histogram": risk_histogram,
+        "by_department": counts(config.COL_DEPARTMENT, 10),
+        "by_resource": counts(config.COL_RESOURCE),
+        "by_time": counts(config.COL_TIME_CLASS),
+    }
+
+
 # --- Interactive ad-hoc scoring -------------------------------------------
 class ScoreRequest(BaseModel):
     """One access event + the actor's profile context, scored on demand.

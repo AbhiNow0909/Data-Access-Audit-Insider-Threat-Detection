@@ -5,13 +5,14 @@ import IncidentDashboard from './components/IncidentDashboard'
 import IncidentCard from './components/IncidentCard'
 import UserProfile from './components/UserProfile'
 import EventTester from './components/EventTester'
+import Overview from './components/Overview'
 
 export default function App() {
   const [health, setHealth] = useState(null)
   const [metrics, setMetrics] = useState(null)
   const [incidents, setIncidents] = useState([])
   const [users, setUsers] = useState([])
-  const [view, setView] = useState('incidents')
+  const [view, setView] = useState('overview')
   const [selectedId, setSelectedId] = useState(null)
   const [detail, setDetail] = useState(null)
   const [detailLoading, setDetailLoading] = useState(false)
@@ -69,7 +70,7 @@ export default function App() {
           </p>
         </div>
         <div className="flex gap-1 rounded-lg border border-slate-800 bg-slate-900 p-1">
-          {['incidents', 'users', 'test'].map((v) => (
+          {['overview', 'incidents', 'users', 'test'].map((v) => (
             <button
               key={v}
               onClick={() => setView(v)}
@@ -86,7 +87,9 @@ export default function App() {
       <MetricsPanel metrics={metrics} />
 
       <main className="mt-5">
-        {view === 'incidents' ? (
+        {view === 'overview' ? (
+          <Overview />
+        ) : view === 'incidents' ? (
           <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)]">
             <IncidentDashboard incidents={incidents} selectedId={selectedId} onSelect={setSelectedId} />
             <IncidentCard incident={detail} loading={detailLoading} />

@@ -27,3 +27,6 @@ Thumbs.db
 data/output/*
 !data/output/.gitkeep
 *.sqlite
+
+# Local explainer doc (intentionally not committed)
+PROJECT_EXPLAINED.md
