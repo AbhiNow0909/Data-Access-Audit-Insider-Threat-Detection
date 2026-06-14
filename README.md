@@ -361,5 +361,4 @@ explainable factors) · False-positive control (5 context rules) · Performance
 
 ---
 
-Build/implementation log: [CLAUDE.md](CLAUDE.md) · Design decisions:
-[docs/architecture.md](docs/architecture.md).
+
